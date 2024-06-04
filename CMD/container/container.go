@@ -1,5 +1,7 @@
 package container
 
 func hola() int {
-	return 0
+	var x = 0
+	return x
+
 }
