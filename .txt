@@ -1,0 +1,15 @@
+comandos utiles porque luego esto no jala chido 
+
+comando para moverme a mi path del proyecto en wsl
+cd /mnt/d/Las\ Tlayudas/Back
+
+
+----Modulos----
+
+    Usuarios 
+
+    crear usuario 
+    actualizar usuario 
+    eliminar usuario 
+    consultar un usuario 
+
