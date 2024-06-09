@@ -19,7 +19,7 @@ jobs:
           POSTGRES_PASSWORD: secret
           POSTGRES_DB: las_tlayudas
 
-        options: >-
+        options:
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
