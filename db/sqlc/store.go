@@ -57,7 +57,7 @@ func (store *Store) UpdateUserPasswordTx(ctx context.Context, arg UpdatePassword
 	err := store.execTx(ctx, func(q *Queries) error {
 		var err error
 
-		// user, err := q.GetUserForUpdate(ctx, arg.Email)
+		result.User, err = q.GetUserForUpdate(ctx, 1)
 
 		if err != nil {
 			return err
