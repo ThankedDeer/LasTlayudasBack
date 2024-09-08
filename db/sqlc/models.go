@@ -27,6 +27,15 @@ type Roles struct {
 	Description sql.NullString `json:"description"`
 }
 
+type Testimonials struct {
+	TestimonialID int32     `json:"testimonial_id"`
+	Title         string    `json:"title"`
+	Testimonial   string    `json:"testimonial"`
+	UserID        int32     `json:"user_id"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdatedAt     time.Time `json:"updated_at"`
+}
+
 type UserRoles struct {
 	UserID     int32     `json:"user_id"`
 	RoleID     int32     `json:"role_id"`
@@ -34,10 +43,11 @@ type UserRoles struct {
 }
 
 type Users struct {
-	UserID    int32     `json:"user_id"`
-	Firstname string    `json:"firstname"`
-	Lastname  string    `json:"lastname"`
-	Password  string    `json:"password"`
-	Email     string    `json:"email"`
-	CreatedAt time.Time `json:"created_at"`
+	UserID            int32     `json:"user_id"`
+	Firstname         string    `json:"firstname"`
+	Lastname          string    `json:"lastname"`
+	Password          string    `json:"password"`
+	Email             string    `json:"email"`
+	PasswordChangedAt time.Time `json:"password_changed_at"`
+	CreatedAt         time.Time `json:"created_at"`
 }

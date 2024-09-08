@@ -24,8 +24,29 @@ func New(db DBTX) *Queries {
 func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	q := Queries{db: db}
 	var err error
+	if q.createTestimonialStmt, err = db.PrepareContext(ctx, createTestimonial); err != nil {
+		return nil, fmt.Errorf("error preparing query CreateTestimonial: %w", err)
+	}
 	if q.createUserStmt, err = db.PrepareContext(ctx, createUser); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateUser: %w", err)
+	}
+	if q.createUserRoleStmt, err = db.PrepareContext(ctx, createUserRole); err != nil {
+		return nil, fmt.Errorf("error preparing query CreateUserRole: %w", err)
+	}
+	if q.deleteTestimonialStmt, err = db.PrepareContext(ctx, deleteTestimonial); err != nil {
+		return nil, fmt.Errorf("error preparing query DeleteTestimonial: %w", err)
+	}
+	if q.deleteUserStmt, err = db.PrepareContext(ctx, deleteUser); err != nil {
+		return nil, fmt.Errorf("error preparing query DeleteUser: %w", err)
+	}
+	if q.getTestimonialStmt, err = db.PrepareContext(ctx, getTestimonial); err != nil {
+		return nil, fmt.Errorf("error preparing query GetTestimonial: %w", err)
+	}
+	if q.getTestimonialsStmt, err = db.PrepareContext(ctx, getTestimonials); err != nil {
+		return nil, fmt.Errorf("error preparing query GetTestimonials: %w", err)
+	}
+	if q.getTestimonialsByUserStmt, err = db.PrepareContext(ctx, getTestimonialsByUser); err != nil {
+		return nil, fmt.Errorf("error preparing query GetTestimonialsByUser: %w", err)
 	}
 	if q.getUserStmt, err = db.PrepareContext(ctx, getUser); err != nil {
 		return nil, fmt.Errorf("error preparing query GetUser: %w", err)
@@ -33,17 +54,64 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.getUserForUpdateStmt, err = db.PrepareContext(ctx, getUserForUpdate); err != nil {
 		return nil, fmt.Errorf("error preparing query GetUserForUpdate: %w", err)
 	}
+	if q.getUsersStmt, err = db.PrepareContext(ctx, getUsers); err != nil {
+		return nil, fmt.Errorf("error preparing query GetUsers: %w", err)
+	}
+	if q.getUsersWithRolesStmt, err = db.PrepareContext(ctx, getUsersWithRoles); err != nil {
+		return nil, fmt.Errorf("error preparing query GetUsersWithRoles: %w", err)
+	}
 	if q.updatPasswordStmt, err = db.PrepareContext(ctx, updatPassword); err != nil {
 		return nil, fmt.Errorf("error preparing query UpdatPassword: %w", err)
+	}
+	if q.updatUserStmt, err = db.PrepareContext(ctx, updatUser); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdatUser: %w", err)
+	}
+	if q.updateTestimonialStmt, err = db.PrepareContext(ctx, updateTestimonial); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateTestimonial: %w", err)
 	}
 	return &q, nil
 }
 
 func (q *Queries) Close() error {
 	var err error
+	if q.createTestimonialStmt != nil {
+		if cerr := q.createTestimonialStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing createTestimonialStmt: %w", cerr)
+		}
+	}
 	if q.createUserStmt != nil {
 		if cerr := q.createUserStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing createUserStmt: %w", cerr)
+		}
+	}
+	if q.createUserRoleStmt != nil {
+		if cerr := q.createUserRoleStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing createUserRoleStmt: %w", cerr)
+		}
+	}
+	if q.deleteTestimonialStmt != nil {
+		if cerr := q.deleteTestimonialStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing deleteTestimonialStmt: %w", cerr)
+		}
+	}
+	if q.deleteUserStmt != nil {
+		if cerr := q.deleteUserStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing deleteUserStmt: %w", cerr)
+		}
+	}
+	if q.getTestimonialStmt != nil {
+		if cerr := q.getTestimonialStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getTestimonialStmt: %w", cerr)
+		}
+	}
+	if q.getTestimonialsStmt != nil {
+		if cerr := q.getTestimonialsStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getTestimonialsStmt: %w", cerr)
+		}
+	}
+	if q.getTestimonialsByUserStmt != nil {
+		if cerr := q.getTestimonialsByUserStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getTestimonialsByUserStmt: %w", cerr)
 		}
 	}
 	if q.getUserStmt != nil {
@@ -56,9 +124,29 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing getUserForUpdateStmt: %w", cerr)
 		}
 	}
+	if q.getUsersStmt != nil {
+		if cerr := q.getUsersStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getUsersStmt: %w", cerr)
+		}
+	}
+	if q.getUsersWithRolesStmt != nil {
+		if cerr := q.getUsersWithRolesStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getUsersWithRolesStmt: %w", cerr)
+		}
+	}
 	if q.updatPasswordStmt != nil {
 		if cerr := q.updatPasswordStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing updatPasswordStmt: %w", cerr)
+		}
+	}
+	if q.updatUserStmt != nil {
+		if cerr := q.updatUserStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updatUserStmt: %w", cerr)
+		}
+	}
+	if q.updateTestimonialStmt != nil {
+		if cerr := q.updateTestimonialStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateTestimonialStmt: %w", cerr)
 		}
 	}
 	return err
@@ -98,21 +186,43 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db                   DBTX
-	tx                   *sql.Tx
-	createUserStmt       *sql.Stmt
-	getUserStmt          *sql.Stmt
-	getUserForUpdateStmt *sql.Stmt
-	updatPasswordStmt    *sql.Stmt
+	db                        DBTX
+	tx                        *sql.Tx
+	createTestimonialStmt     *sql.Stmt
+	createUserStmt            *sql.Stmt
+	createUserRoleStmt        *sql.Stmt
+	deleteTestimonialStmt     *sql.Stmt
+	deleteUserStmt            *sql.Stmt
+	getTestimonialStmt        *sql.Stmt
+	getTestimonialsStmt       *sql.Stmt
+	getTestimonialsByUserStmt *sql.Stmt
+	getUserStmt               *sql.Stmt
+	getUserForUpdateStmt      *sql.Stmt
+	getUsersStmt              *sql.Stmt
+	getUsersWithRolesStmt     *sql.Stmt
+	updatPasswordStmt         *sql.Stmt
+	updatUserStmt             *sql.Stmt
+	updateTestimonialStmt     *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db:                   tx,
-		tx:                   tx,
-		createUserStmt:       q.createUserStmt,
-		getUserStmt:          q.getUserStmt,
-		getUserForUpdateStmt: q.getUserForUpdateStmt,
-		updatPasswordStmt:    q.updatPasswordStmt,
+		db:                        tx,
+		tx:                        tx,
+		createTestimonialStmt:     q.createTestimonialStmt,
+		createUserStmt:            q.createUserStmt,
+		createUserRoleStmt:        q.createUserRoleStmt,
+		deleteTestimonialStmt:     q.deleteTestimonialStmt,
+		deleteUserStmt:            q.deleteUserStmt,
+		getTestimonialStmt:        q.getTestimonialStmt,
+		getTestimonialsStmt:       q.getTestimonialsStmt,
+		getTestimonialsByUserStmt: q.getTestimonialsByUserStmt,
+		getUserStmt:               q.getUserStmt,
+		getUserForUpdateStmt:      q.getUserForUpdateStmt,
+		getUsersStmt:              q.getUsersStmt,
+		getUsersWithRolesStmt:     q.getUsersWithRolesStmt,
+		updatPasswordStmt:         q.updatPasswordStmt,
+		updatUserStmt:             q.updatUserStmt,
+		updateTestimonialStmt:     q.updateTestimonialStmt,
 	}
 }

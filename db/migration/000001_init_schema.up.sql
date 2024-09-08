@@ -37,6 +37,17 @@ CREATE TABLE
     "assigned_at" TIMESTAMP NOT NULL DEFAULT (now ())
   );
 
+CREATE TABLE
+  "testimonials" (
+    "testimonial_id" SERIAL PRIMARY KEY,
+    "title" VARCHAR NOT NULL,
+    "testimonial" TEXT NOT NULL,
+    "user_id" INTEGER NOT NULL,
+    "created_at" TIMESTAMP NOT NULL DEFAULT (now ()),
+    "updated_at" TIMESTAMP NOT NULL DEFAULT (now ()),
+    FOREIGN KEY ("user_id") REFERENCES "users" ("user_id")
+  );
+
 ALTER TABLE "user_roles" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("user_id");
 
 ALTER TABLE "user_roles" ADD FOREIGN KEY ("role_id") REFERENCES "roles" ("role_id");

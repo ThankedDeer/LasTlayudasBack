@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 )
 
@@ -58,14 +57,10 @@ func (store *Store) UpdateUserPasswordTx(ctx context.Context, arg UpdatePassword
 	err := store.execTx(ctx, func(q *Queries) error {
 		var err error
 
-		user, err := q.GetUserForUpdate(ctx, arg.Email)
+		// user, err := q.GetUserForUpdate(ctx, arg.Email)
 
 		if err != nil {
 			return err
-		}
-
-		if user.UserID == 0 {
-			return errors.New("usuario no existente")
 		}
 
 		result.User, err = q.UpdatPassword(ctx, UpdatPasswordParams(arg))
