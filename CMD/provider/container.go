@@ -3,14 +3,15 @@ package provider
 import (
 	"database/sql"
 	"github/thankeddeer/lastlayudas/config"
-	db "github/thankeddeer/lastlayudas/db/sqlc"
 	"github/thankeddeer/lastlayudas/internal/app"
 	"github/thankeddeer/lastlayudas/internal/infra/api"
 	"github/thankeddeer/lastlayudas/internal/infra/api/handler"
 	"github/thankeddeer/lastlayudas/internal/infra/api/router"
+	"github/thankeddeer/lastlayudas/store/sqlc"
 	"log"
 
 	"github.com/labstack/echo/v4"
+
 )
 
 type Container struct{}
@@ -34,7 +35,7 @@ func (c *Container) Build() *api.Server {
 	engine := echo.New()
 
 	//son todas los repositorios que genera sqlc
-	store := db.NewStore(conn)
+	store := sqlc.NewStore(conn)
 
 	userService := app.NewUserApp(store)
 	userHandler := handler.NewUserHandler(userService)
