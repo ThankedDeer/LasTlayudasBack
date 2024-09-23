@@ -11,7 +11,7 @@ func main() {
 
 	err := p.Build().Run()
 	if err != nil {
-		return 
+		return
 	}
 
 }
