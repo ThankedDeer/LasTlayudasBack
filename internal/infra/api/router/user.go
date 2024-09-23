@@ -4,6 +4,7 @@ import (
 	"github/thankeddeer/lastlayudas/internal/infra/api/handler"
 
 	"github.com/labstack/echo/v4"
+
 )
 
 type IUserRouter interface {
@@ -25,5 +26,5 @@ func (u *UserRouter) UserResource(g *echo.Group) {
 	groupPath.POST("/Testimonials", u.handler.CreateTestimonial)
 	groupPath.GET("/Testimonials", u.handler.GetTestimonials)
 	groupPath.GET("/", u.handler.GetUsers)
-	groupPath.PUT("/", u.handler.UpdateUser)
+	groupPath.PUT("/", u.handler.UpdateUser,)
 }
