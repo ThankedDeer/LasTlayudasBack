@@ -7,6 +7,9 @@ createdb:
 dropdb:
 	docker exec -it postgres12 dropdb las_tlayudas
 
+rundb:
+	docker start postgres12
+
 migrateup:
 	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/las_tlayudas?sslmode=disable" -verbose up
 
@@ -19,4 +22,7 @@ sqlc:
 test:
 	go test -v -cover ./...
 
-.POHNY: postgres createbd dropdb migrateup migratedown sqlc test
+server:
+	go run main.go
+	
+.POHNY: postgres createbd dropdb rundb migrateup migratedown sqlc test server
