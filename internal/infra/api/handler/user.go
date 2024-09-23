@@ -3,9 +3,9 @@ package handler
 import (
 	"encoding/json"
 	"errors"
-	db "github/thankeddeer/lastlayudas/db/sqlc"
 	"github/thankeddeer/lastlayudas/internal/app"
 	"github/thankeddeer/lastlayudas/internal/domain/dto"
+	"github/thankeddeer/lastlayudas/store/sqlc"
 	"net/http"
 	"unicode"
 
@@ -81,7 +81,7 @@ func (u *UserHandler) GetUsers(c echo.Context) error {
 }
 
 func (u *UserHandler) UpdateUser(c echo.Context) error {
-	var req db.UpdatUserParams
+	var req sqlc.UpdatUserParams
 
 	decoder := json.NewDecoder(c.Request().Body)
 

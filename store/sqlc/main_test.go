@@ -1,12 +1,11 @@
-package db
+package sqlc
 
 import (
 	"database/sql"
+	"github/thankeddeer/lastlayudas/config"
 	"log"
 	"os"
 	"testing"
-
-	"github/thankeddeer/lastlayudas/config"
 
 	_ "github.com/lib/pq"
 )

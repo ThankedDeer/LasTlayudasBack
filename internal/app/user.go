@@ -4,23 +4,23 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	db "github/thankeddeer/lastlayudas/db/sqlc"
 	"github/thankeddeer/lastlayudas/internal/domain/dto"
+	"github/thankeddeer/lastlayudas/store/sqlc"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
 type UserApp struct {
-	store *db.Store
+	store *sqlc.Store
 }
 
-func NewUserApp(store *db.Store) UserApp {
+func NewUserApp(store *sqlc.Store) UserApp {
 	return UserApp{
 		store: store,
 	}
 }
 
-func (u *UserApp) CreateUser(data dto.CreateUserRequest) (*db.Users, error) {
+func (u *UserApp) CreateUser(data dto.CreateUserRequest) (*sqlc.Users, error) {
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -29,12 +29,12 @@ func (u *UserApp) CreateUser(data dto.CreateUserRequest) (*db.Users, error) {
 
 	data.Password = string(hashedPassword)
 
-	user, err := u.store.CreateUser(context.Background(), db.CreateUserParams(data))
+	user, err := u.store.CreateUser(context.Background(), sqlc.CreateUserParams(data))
 	if err != nil {
 		return nil, err
 	}
 
-	userRole, err := u.store.CreateUserRole(context.Background(), db.CreateUserRoleParams{
+	userRole, err := u.store.CreateUserRole(context.Background(), sqlc.CreateUserRoleParams{
 		UserID: user.UserID,
 		RoleID: 1,
 	})
@@ -48,7 +48,7 @@ func (u *UserApp) CreateUser(data dto.CreateUserRequest) (*db.Users, error) {
 	return &user, nil
 }
 
-func (u *UserApp) GetUsers() ([]db.GetUsersWithRolesRow, error) {
+func (u *UserApp) GetUsers() ([]sqlc.GetUsersWithRolesRow, error) {
 
 	users, err := u.store.GetUsersWithRoles(context.Background())
 	if err != nil {
@@ -62,9 +62,9 @@ func (u *UserApp) GetUsers() ([]db.GetUsersWithRolesRow, error) {
 	return users, nil
 }
 
-func (u *UserApp) UpdateUser(data db.UpdatUserParams) error {
+func (u *UserApp) UpdateUser(data sqlc.UpdatUserParams) error {
 
-	arg := db.UpdatUserParams{
+	arg := sqlc.UpdatUserParams{
 		UserID:    data.UserID,
 		Firstname: data.Firstname,
 		Lastname:  data.Lastname,
@@ -80,9 +80,9 @@ func (u *UserApp) UpdateUser(data db.UpdatUserParams) error {
 	return nil
 }
 
-func (u *UserApp) CreateTestimonial(data dto.CreateTestimonial) (*db.Testimonials, error) {
+func (u *UserApp) CreateTestimonial(data dto.CreateTestimonial) (*sqlc.Testimonials, error) {
 
-	arg := db.CreateTestimonialParams{
+	arg := sqlc.CreateTestimonialParams{
 		Title:       data.Title,
 		Testimonial: data.Testimonial,
 		UserID:      5,
@@ -95,7 +95,7 @@ func (u *UserApp) CreateTestimonial(data dto.CreateTestimonial) (*db.Testimonial
 	return &testimonial, nil
 }
 
-func (u *UserApp) GetTestimonial() ([]db.Testimonials, error) {
+func (u *UserApp) GetTestimonial() ([]sqlc.Testimonials, error) {
 
 	testimonial, err := u.store.GetTestimonials(context.Background())
 	if err != nil {
