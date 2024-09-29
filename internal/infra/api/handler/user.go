@@ -5,7 +5,7 @@ import (
 	"errors"
 	"github/thankeddeer/lastlayudas/internal/app"
 	"github/thankeddeer/lastlayudas/internal/domain/dto"
-	"github/thankeddeer/lastlayudas/store/sqlc"
+	"github/thankeddeer/lastlayudas/internal/store/sqlc"
 	"net/http"
 	"unicode"
 
