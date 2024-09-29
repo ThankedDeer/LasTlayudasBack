@@ -7,11 +7,10 @@ import (
 	"github/thankeddeer/lastlayudas/internal/infra/api"
 	"github/thankeddeer/lastlayudas/internal/infra/api/handler"
 	"github/thankeddeer/lastlayudas/internal/infra/api/router"
-	"github/thankeddeer/lastlayudas/store/sqlc"
+	"github/thankeddeer/lastlayudas/internal/store/sqlc"
 	"log"
 
 	"github.com/labstack/echo/v4"
-
 )
 
 type Container struct{}
