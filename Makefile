@@ -11,10 +11,10 @@ rundb:
 	docker start postgres12
 
 migrateup:
-	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/las_tlayudas?sslmode=disable" -verbose up
+	migrate -path db/migration -database "postgresql://root:123456@localhost:5432/las_tlayudas?sslmode=disable" -verbose up
 
 migratedown:
-	migrate -path db/migration -database "postgresql://root:secret@localhost:5432/las_tlayudas?sslmode=disable" -verbose down
+	migrate -path db/migration -database "postgresql://root:123456@localhost:5432/las_tlayudas?sslmode=disable" -verbose down
 
 sqlc:
 	sqlc generate
