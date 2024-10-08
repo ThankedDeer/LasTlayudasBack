@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github/thankeddeer/lastlayudas/internal/domain/dto"
-	"github/thankeddeer/lastlayudas/store/sqlc"
+	"github/thankeddeer/lastlayudas/internal/store/sqlc"
 
 	"golang.org/x/crypto/bcrypt"
 )
