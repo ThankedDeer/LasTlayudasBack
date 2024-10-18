@@ -56,7 +56,7 @@ func (u *UserApp) GetUsers() ([]sqlc.GetUsersWithRolesRow, error) {
 	}
 
 	if len(users) == 0 {
-		return nil, errors.New("no se encontraron usuarioss")
+		return nil, errors.New("no se encontraron usuarios")
 	}
 
 	return users, nil
