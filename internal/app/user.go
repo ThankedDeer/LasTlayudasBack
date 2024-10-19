@@ -14,6 +14,7 @@ type UserApp struct {
 	store *sqlc.Store
 }
 
+
 func NewUserApp(store *sqlc.Store) UserApp {
 	return UserApp{
 		store: store,
