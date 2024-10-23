@@ -1,57 +1,133 @@
-CREATE TABLE
-  "users" (
-    "user_id" SERIAL PRIMARY KEY,
-    "firstname" VARCHAR NOT NULL,
-    "lastname" VARCHAR NOT NULL,
-    "password" VARCHAR NOT NULL,
-    "email" VARCHAR UNIQUE NOT NULL,
-    "password_changed_at" TIMESTAMP NOT NULL DEFAULT '0001-01-01 00:00:00Z',
-    "created_at" TIMESTAMP NOT NULL DEFAULT (now ())
-  );
+-- Proveedor
+CREATE TABLE "provider" (
+  "provider_id" serial PRIMARY KEY,
+  "name" varchar(255) UNIQUE NOT NULL,
+  "phone" varchar(20) UNIQUE NOT NULL,
+  "email" varchar(255) UNIQUE NOT NULL,
+  "address" varchar(255) NOT NULL,
+  "created_at" timestamp DEFAULT current_timestamp,
+  "updated_at" timestamp DEFAULT current_timestamp
+);
 
-CREATE TABLE
-  "roles" (
-    "role_id" SERIAL PRIMARY KEY,
-    "name" VARCHAR UNIQUE NOT NULL,
-    "description" TEXT
-  );
+-- Categoría
+CREATE TABLE "category" (
+  "category_id" serial PRIMARY KEY,
+  "name" varchar(100) UNIQUE NOT NULL,
+  "description" varchar(255),
+  "active" boolean DEFAULT true,
+  "created_at" timestamp DEFAULT current_timestamp,
+  "updated_at" timestamp DEFAULT current_timestamp
+);
 
-CREATE TABLE
-  "permissions" (
-    "permission_id" SERIAL PRIMARY KEY,
-    "name" VARCHAR UNIQUE NOT NULL,
-    "description" TEXT
-  );
+-- Producto
+CREATE TABLE "product" (
+  "product_id" serial PRIMARY KEY,
+  "name" varchar(255) UNIQUE NOT NULL,
+  "purchase_price" decimal(10, 2) NOT NULL,
+  "sale_price" decimal(10, 2) NOT NULL,
+  "stock" integer NOT NULL,
+  "category_id" integer NOT NULL,
+  "provider_id" integer NOT NULL,
+  "created_at" timestamp DEFAULT current_timestamp,
+  "updated_at" timestamp DEFAULT current_timestamp,
+  FOREIGN KEY ("category_id") REFERENCES "category" ("category_id"),
+  FOREIGN KEY ("provider_id") REFERENCES "provider" ("provider_id")
+);
 
-CREATE TABLE
-  "user_roles" (
-    "user_id" INTEGER NOT NULL,
-    "role_id" INTEGER NOT NULL,
-    "assigned_at" TIMESTAMP NOT NULL DEFAULT (now ())
-  );
+-- Rol
+CREATE TABLE "role" (
+  "role_id" serial PRIMARY KEY,
+  "name" varchar(50) UNIQUE NOT NULL,
+  "description" varchar(255),
+  "created_at" timestamp DEFAULT current_timestamp,
+  "updated_at" timestamp DEFAULT current_timestamp
+);
 
-CREATE TABLE
-  "role_permissions" (
-    "role_id" INTEGER NOT NULL,
-    "permission_id" INTEGER NOT NULL,
-    "assigned_at" TIMESTAMP NOT NULL DEFAULT (now ())
-  );
+-- Permiso
+CREATE TABLE "permission" (
+  "permission_id" serial PRIMARY KEY,
+  "name" varchar(50) UNIQUE NOT NULL,
+  "description" varchar(255),
+  "created_at" timestamp DEFAULT current_timestamp,
+  "updated_at" timestamp DEFAULT current_timestamp
+);
 
-CREATE TABLE
-  "testimonials" (
-    "testimonial_id" SERIAL PRIMARY KEY,
-    "title" VARCHAR NOT NULL,
-    "testimonial" TEXT NOT NULL,
-    "user_id" INTEGER NOT NULL,
-    "created_at" TIMESTAMP NOT NULL DEFAULT (now ()),
-    "updated_at" TIMESTAMP NOT NULL DEFAULT (now ()),
-    FOREIGN KEY ("user_id") REFERENCES "users" ("user_id")
-  );
+-- Rol Permiso (relación N:M entre roles y permisos)
+CREATE TABLE "role_permission" (
+  "role_permission_id" serial PRIMARY KEY,
+  "role_id" integer NOT NULL,
+  "permission_id" integer NOT NULL,
+  "created_at" timestamp DEFAULT current_timestamp,
+  FOREIGN KEY ("role_id") REFERENCES "role" ("role_id"),
+  FOREIGN KEY ("permission_id") REFERENCES "permission" ("permission_id")
+);
 
-ALTER TABLE "user_roles" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("user_id");
+-- Usuario
+CREATE TABLE "user" (
+  "user_id" serial PRIMARY KEY,
+  "role_id" integer NOT NULL,
+  "first_name" varchar(100) NOT NULL,
+  "last_name" varchar(100) NOT NULL,
+  "email" varchar(255) UNIQUE NOT NULL,
+  "password" varchar(255) NOT NULL,
+  "active" boolean DEFAULT true,
+  "created_at" timestamp DEFAULT current_timestamp,
+  "updated_at" timestamp DEFAULT current_timestamp,
+  FOREIGN KEY ("role_id") REFERENCES "role" ("role_id")
+);
 
-ALTER TABLE "user_roles" ADD FOREIGN KEY ("role_id") REFERENCES "roles" ("role_id");
+-- Mesero
+CREATE TABLE "waiter" (
+  "waiter_id" serial PRIMARY KEY,
+  "user_id" integer UNIQUE NOT NULL,
+  "created_at" timestamp DEFAULT current_timestamp,
+  FOREIGN KEY ("user_id") REFERENCES "user" ("user_id")
+);
 
-ALTER TABLE "role_permissions" ADD FOREIGN KEY ("role_id") REFERENCES "roles" ("role_id");
+-- Estado de la Mesa
+CREATE TABLE "table_status" (
+  "table_status_id" serial PRIMARY KEY,
+  "name" varchar(100) NOT NULL,
+  "description" varchar(255),
+  "created_at" timestamp DEFAULT current_timestamp
+);
 
-ALTER TABLE "role_permissions" ADD FOREIGN KEY ("permission_id") REFERENCES "permissions" ("permission_id");
+-- Mesa
+CREATE TABLE "restaurant_table" (
+  "table_id" serial PRIMARY KEY,
+  "number" integer UNIQUE NOT NULL,
+  "waiter_id" integer NOT NULL,
+  "status_id" integer NOT NULL,
+  "created_at" timestamp DEFAULT current_timestamp,
+  "updated_at" timestamp DEFAULT current_timestamp,
+  FOREIGN KEY ("waiter_id") REFERENCES "waiter" ("waiter_id"),
+  FOREIGN KEY ("status_id") REFERENCES "table_status" ("table_status_id")
+);
+
+-- Estado del Pedido
+CREATE TABLE "order_status" (
+  "order_status_id" serial PRIMARY KEY,
+  "name" varchar(100) NOT NULL,
+  "description" varchar(255),
+  "created_at" timestamp DEFAULT current_timestamp
+);
+
+-- Pedido
+CREATE TABLE "order" (
+  "order_id" serial PRIMARY KEY,
+  "order_date" timestamp DEFAULT current_timestamp,
+  "table_id" integer NOT NULL,
+  "status_id" integer NOT NULL,
+  FOREIGN KEY ("table_id") REFERENCES "restaurant_table" ("table_id"),
+  FOREIGN KEY ("status_id") REFERENCES "order_status" ("order_status_id")
+);
+
+-- Productos en Pedido (relación N:M entre pedidos y productos)
+CREATE TABLE "order_product" (
+  "order_product_id" serial PRIMARY KEY,
+  "order_id" integer NOT NULL,
+  "product_id" integer NOT NULL,
+  "quantity" integer NOT NULL DEFAULT 1,
+  FOREIGN KEY ("order_id") REFERENCES "order" ("order_id"),
+  FOREIGN KEY ("product_id") REFERENCES "product" ("product_id")
+);
