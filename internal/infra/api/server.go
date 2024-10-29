@@ -3,7 +3,6 @@ package api
 import (
 	"fmt"
 	"github/thankeddeer/lastlayudas/config"
-	"github/thankeddeer/lastlayudas/internal/infra/api/router"
 	"log"
 
 	"github.com/labstack/echo/v4"
@@ -11,20 +10,20 @@ import (
 )
 
 type Server struct {
-	cfg        config.Config
-	engine     *echo.Echo
-	userRouter router.IUserRouter
+	cfg    config.Config
+	engine *echo.Echo
+	//userRouter router.IUserRouter
 }
 
 func NewServer(
 	cfg config.Config,
 	engine *echo.Echo,
-	userRouter router.IUserRouter,
+	//userRouter router.IUserRouter,
 ) *Server {
 	return &Server{
-		cfg:        cfg,
-		engine:     engine,
-		userRouter: userRouter,
+		cfg:    cfg,
+		engine: engine,
+		//userRouter: userRouter,
 	}
 
 }
@@ -35,8 +34,9 @@ func (s *Server) BuildServer() {
 	s.engine.Use(middleware.Recover())
 
 	basePath := s.engine.Group("/api")
-	s.userRouter.UserResource(basePath)
-	
+	//s.userRouter.UserResource(basePath)
+	fmt.Println(basePath)
+
 }
 
 func (s *Server) Run() error {
