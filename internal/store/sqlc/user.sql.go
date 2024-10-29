@@ -11,67 +11,57 @@ import (
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (
-    firstname,
-    lastname,
-    password,
-    email
-) VALUES (
-    $1,$2,$3,$4
-) RETURNING user_id, firstname, lastname, password, email, password_changed_at, created_at
+INSERT INTO "user" (role_id, first_name, last_name, email, password, active)
+VALUES ($1, $2, $3, $4, $5, COALESCE($6, true))
+RETURNING user_id, role_id, first_name, last_name, email, active, created_at, updated_at
 `
 
 type CreateUserParams struct {
-	Firstname string `json:"firstname"`
-	Lastname  string `json:"lastname"`
-	Password  string `json:"password"`
-	Email     string `json:"email"`
+	RoleID    int32       `json:"role_id"`
+	FirstName string      `json:"first_name"`
+	LastName  string      `json:"last_name"`
+	Email     string      `json:"email"`
+	Password  string      `json:"password"`
+	Column6   interface{} `json:"column_6"`
 }
 
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (Users, error) {
+type CreateUserRow struct {
+	UserID    int32        `json:"user_id"`
+	RoleID    int32        `json:"role_id"`
+	FirstName string       `json:"first_name"`
+	LastName  string       `json:"last_name"`
+	Email     string       `json:"email"`
+	Active    sql.NullBool `json:"active"`
+	CreatedAt sql.NullTime `json:"created_at"`
+	UpdatedAt sql.NullTime `json:"updated_at"`
+}
+
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
 	row := q.queryRow(ctx, q.createUserStmt, createUser,
-		arg.Firstname,
-		arg.Lastname,
-		arg.Password,
+		arg.RoleID,
+		arg.FirstName,
+		arg.LastName,
 		arg.Email,
+		arg.Password,
+		arg.Column6,
 	)
-	var i Users
+	var i CreateUserRow
 	err := row.Scan(
 		&i.UserID,
-		&i.Firstname,
-		&i.Lastname,
-		&i.Password,
+		&i.RoleID,
+		&i.FirstName,
+		&i.LastName,
 		&i.Email,
-		&i.PasswordChangedAt,
+		&i.Active,
 		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
-	return i, err
-}
-
-const createUserRole = `-- name: CreateUserRole :one
-INSERT INTO user_roles (
-    user_id,
-    role_id,
-    assigned_at
-) VALUES (
-    $1, $2, DEFAULT
-) RETURNING user_id, role_id, assigned_at
-`
-
-type CreateUserRoleParams struct {
-	UserID int32 `json:"user_id"`
-	RoleID int32 `json:"role_id"`
-}
-
-func (q *Queries) CreateUserRole(ctx context.Context, arg CreateUserRoleParams) (UserRoles, error) {
-	row := q.queryRow(ctx, q.createUserRoleStmt, createUserRole, arg.UserID, arg.RoleID)
-	var i UserRoles
-	err := row.Scan(&i.UserID, &i.RoleID, &i.AssignedAt)
 	return i, err
 }
 
 const deleteUser = `-- name: DeleteUser :exec
-DELETE FROM users WHERE user_id = $1
+DELETE FROM "user"
+WHERE user_id = $1
 `
 
 func (q *Queries) DeleteUser(ctx context.Context, userID int32) error {
@@ -79,132 +69,41 @@ func (q *Queries) DeleteUser(ctx context.Context, userID int32) error {
 	return err
 }
 
-const getUser = `-- name: GetUser :one
-SELECT user_id, firstname, lastname, password, email, password_changed_at, created_at FROM users
-WHERE email =$1 LIMIT 1
+const getAllUsers = `-- name: GetAllUsers :many
+SELECT user_id, role_id, first_name, last_name, email, active, created_at, updated_at
+FROM "user"
+ORDER BY last_name, first_name
 `
 
-func (q *Queries) GetUser(ctx context.Context, email string) (Users, error) {
-	row := q.queryRow(ctx, q.getUserStmt, getUser, email)
-	var i Users
-	err := row.Scan(
-		&i.UserID,
-		&i.Firstname,
-		&i.Lastname,
-		&i.Password,
-		&i.Email,
-		&i.PasswordChangedAt,
-		&i.CreatedAt,
-	)
-	return i, err
+type GetAllUsersRow struct {
+	UserID    int32        `json:"user_id"`
+	RoleID    int32        `json:"role_id"`
+	FirstName string       `json:"first_name"`
+	LastName  string       `json:"last_name"`
+	Email     string       `json:"email"`
+	Active    sql.NullBool `json:"active"`
+	CreatedAt sql.NullTime `json:"created_at"`
+	UpdatedAt sql.NullTime `json:"updated_at"`
 }
 
-const getUserForUpdate = `-- name: GetUserForUpdate :one
-SELECT user_id, firstname, lastname, password, email, password_changed_at, created_at FROM users
-WHERE user_id =$1
-FOR UPDATE
-`
-
-func (q *Queries) GetUserForUpdate(ctx context.Context, userID int32) (Users, error) {
-	row := q.queryRow(ctx, q.getUserForUpdateStmt, getUserForUpdate, userID)
-	var i Users
-	err := row.Scan(
-		&i.UserID,
-		&i.Firstname,
-		&i.Lastname,
-		&i.Password,
-		&i.Email,
-		&i.PasswordChangedAt,
-		&i.CreatedAt,
-	)
-	return i, err
-}
-
-const getUsers = `-- name: GetUsers :many
-SELECT user_id, firstname, lastname, password, email, password_changed_at, created_at FROM users
-ORDER BY user_id
-`
-
-func (q *Queries) GetUsers(ctx context.Context) ([]Users, error) {
-	rows, err := q.query(ctx, q.getUsersStmt, getUsers)
+func (q *Queries) GetAllUsers(ctx context.Context) ([]GetAllUsersRow, error) {
+	rows, err := q.query(ctx, q.getAllUsersStmt, getAllUsers)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Users
+	var items []GetAllUsersRow
 	for rows.Next() {
-		var i Users
+		var i GetAllUsersRow
 		if err := rows.Scan(
 			&i.UserID,
-			&i.Firstname,
-			&i.Lastname,
-			&i.Password,
-			&i.Email,
-			&i.PasswordChangedAt,
-			&i.CreatedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getUsersWithRoles = `-- name: GetUsersWithRoles :many
-SELECT 
-    u.user_id,
-    u.firstname,
-    u.lastname,
-    u.password,
-    u.email,
-    r.role_id,
-    r.name AS role_name,
-    r.description AS role_description
-FROM 
-    users u
-INNER JOIN 
-    user_roles ur ON u.user_id = ur.user_id
-INNER JOIN 
-    roles r ON ur.role_id = r.role_id
-ORDER BY 
-    u.user_id
-`
-
-type GetUsersWithRolesRow struct {
-	UserID          int32          `json:"user_id"`
-	Firstname       string         `json:"firstname"`
-	Lastname        string         `json:"lastname"`
-	Password        string         `json:"password"`
-	Email           string         `json:"email"`
-	RoleID          int32          `json:"role_id"`
-	RoleName        string         `json:"role_name"`
-	RoleDescription sql.NullString `json:"role_description"`
-}
-
-func (q *Queries) GetUsersWithRoles(ctx context.Context) ([]GetUsersWithRolesRow, error) {
-	rows, err := q.query(ctx, q.getUsersWithRolesStmt, getUsersWithRoles)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GetUsersWithRolesRow
-	for rows.Next() {
-		var i GetUsersWithRolesRow
-		if err := rows.Scan(
-			&i.UserID,
-			&i.Firstname,
-			&i.Lastname,
-			&i.Password,
-			&i.Email,
 			&i.RoleID,
-			&i.RoleName,
-			&i.RoleDescription,
+			&i.FirstName,
+			&i.LastName,
+			&i.Email,
+			&i.Active,
+			&i.CreatedAt,
+			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -219,57 +118,103 @@ func (q *Queries) GetUsersWithRoles(ctx context.Context) ([]GetUsersWithRolesRow
 	return items, nil
 }
 
-const updatPassword = `-- name: UpdatPassword :one
-UPDATE users SET password = $2
+const getUserByEmail = `-- name: GetUserByEmail :one
+SELECT user_id, role_id, first_name, last_name, email, active, created_at, updated_at
+FROM "user"
 WHERE email = $1
-RETURNING user_id, firstname, lastname, password, email, password_changed_at, created_at
 `
 
-type UpdatPasswordParams struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+type GetUserByEmailRow struct {
+	UserID    int32        `json:"user_id"`
+	RoleID    int32        `json:"role_id"`
+	FirstName string       `json:"first_name"`
+	LastName  string       `json:"last_name"`
+	Email     string       `json:"email"`
+	Active    sql.NullBool `json:"active"`
+	CreatedAt sql.NullTime `json:"created_at"`
+	UpdatedAt sql.NullTime `json:"updated_at"`
 }
 
-func (q *Queries) UpdatPassword(ctx context.Context, arg UpdatPasswordParams) (Users, error) {
-	row := q.queryRow(ctx, q.updatPasswordStmt, updatPassword, arg.Email, arg.Password)
-	var i Users
+func (q *Queries) GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error) {
+	row := q.queryRow(ctx, q.getUserByEmailStmt, getUserByEmail, email)
+	var i GetUserByEmailRow
 	err := row.Scan(
 		&i.UserID,
-		&i.Firstname,
-		&i.Lastname,
-		&i.Password,
+		&i.RoleID,
+		&i.FirstName,
+		&i.LastName,
 		&i.Email,
-		&i.PasswordChangedAt,
+		&i.Active,
 		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }
 
-const updatUser = `-- name: UpdatUser :exec
-UPDATE users SET 
-firstname = $2,
-lastname = $3,
-password = $4,
-email = $5
+const getUserByID = `-- name: GetUserByID :one
+SELECT user_id, role_id, first_name, last_name, email, active, created_at, updated_at
+FROM "user"
 WHERE user_id = $1
-RETURNING user_id, firstname, lastname, password, email, password_changed_at, created_at
 `
 
-type UpdatUserParams struct {
-	UserID    int32  `json:"user_id"`
-	Firstname string `json:"firstname"`
-	Lastname  string `json:"lastname"`
-	Password  string `json:"password"`
-	Email     string `json:"email"`
+type GetUserByIDRow struct {
+	UserID    int32        `json:"user_id"`
+	RoleID    int32        `json:"role_id"`
+	FirstName string       `json:"first_name"`
+	LastName  string       `json:"last_name"`
+	Email     string       `json:"email"`
+	Active    sql.NullBool `json:"active"`
+	CreatedAt sql.NullTime `json:"created_at"`
+	UpdatedAt sql.NullTime `json:"updated_at"`
 }
 
-func (q *Queries) UpdatUser(ctx context.Context, arg UpdatUserParams) error {
-	_, err := q.exec(ctx, q.updatUserStmt, updatUser,
+func (q *Queries) GetUserByID(ctx context.Context, userID int32) (GetUserByIDRow, error) {
+	row := q.queryRow(ctx, q.getUserByIDStmt, getUserByID, userID)
+	var i GetUserByIDRow
+	err := row.Scan(
+		&i.UserID,
+		&i.RoleID,
+		&i.FirstName,
+		&i.LastName,
+		&i.Email,
+		&i.Active,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const updateUser = `-- name: UpdateUser :exec
+UPDATE "user"
+SET role_id = $2,
+    first_name = $3,
+    last_name = $4,
+    email = $5,
+    password = $6,
+    active = $7,
+    updated_at = current_timestamp
+WHERE user_id = $1
+`
+
+type UpdateUserParams struct {
+	UserID    int32        `json:"user_id"`
+	RoleID    int32        `json:"role_id"`
+	FirstName string       `json:"first_name"`
+	LastName  string       `json:"last_name"`
+	Email     string       `json:"email"`
+	Password  string       `json:"password"`
+	Active    sql.NullBool `json:"active"`
+}
+
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
+	_, err := q.exec(ctx, q.updateUserStmt, updateUser,
 		arg.UserID,
-		arg.Firstname,
-		arg.Lastname,
-		arg.Password,
+		arg.RoleID,
+		arg.FirstName,
+		arg.LastName,
 		arg.Email,
+		arg.Password,
+		arg.Active,
 	)
 	return err
 }

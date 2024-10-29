@@ -36,6 +36,7 @@ func (s *Server) BuildServer() {
 
 	basePath := s.engine.Group("/api")
 	s.userRouter.UserResource(basePath)
+	
 }
 
 func (s *Server) Run() error {
