@@ -25,4 +25,5 @@ func (u *ProductRouter) ProductResource(g *echo.Group) {
 	groupPath.POST("/", u.handler.CreateProduct)
 	groupPath.GET("/", u.handler.GetAllProducts)
 	groupPath.PUT("/", u.handler.UpdateProduct)
+	groupPath.DELETE("/", u.handler.UpdateProduct)
 }

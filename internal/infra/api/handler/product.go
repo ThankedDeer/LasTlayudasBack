@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 
@@ -28,16 +29,19 @@ func NewProductHandler(app app.ProductApp) IProductHandler {
 
 // CreateProduct handles product creation
 func (u *ProductHandler) CreateProduct(c echo.Context) error {
-	var request dto.CreateProductRequest
-	if err := c.Bind(&request); err != nil {
+	var req dto.CreateProductRequest
+
+	// Usar NewDecoder para decodificar el cuerpo JSON en la estructura `req`
+	if err := json.NewDecoder(c.Request().Body).Decode(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request payload"})
 	}
 
-	if err := u.app.CreateProduct(request); err != nil {
+	// Llamar al método de la aplicación para crear el producto
+	if err := u.app.CreateProduct(req); err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 
-	return c.JSON(http.StatusCreated, map[string]string{"message": "Producto creado con exito"})
+	return c.JSON(http.StatusCreated, map[string]string{"message": "Producto creado con éxito"})
 }
 
 // GetAllProducts retrieves all products
@@ -57,14 +61,14 @@ func (u *ProductHandler) UpdateProduct(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid product ID"})
 	}
 
-	var request dto.UpdateProductRequest
-	if err := c.Bind(&request); err != nil {
+	var req dto.UpdateProductRequest
+	if err := json.NewDecoder(c.Request().Body).Decode(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request payload"})
 	}
 
-	if err := u.app.UpdateProduct(id, request); err != nil {
+	if err := u.app.UpdateProduct(id, req); err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 
-	return c.JSON(http.StatusOK, map[string]string{"message": "Product updated successfully"})
+	return c.JSON(http.StatusOK, map[string]string{"message": "Producto actualizado con éxito"})
 }
