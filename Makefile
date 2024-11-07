@@ -24,5 +24,11 @@ test:
 
 server:
 	go run main.go
+
+start: 
+	make rundb slqc
+
+init:
+	make postgres createdb rundb migrateup sqlc
 	
-.POHNY: postgres createbd dropdb rundb migrateup migratedown sqlc test server
+.POHNY: postgres createbd dropdb rundb migrateup migratedown sqlc test server start init
