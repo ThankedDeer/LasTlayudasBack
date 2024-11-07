@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"github/thankeddeer/lastlayudas/config"
+	"github/thankeddeer/lastlayudas/internal/infra/api/router"
 	"log"
 
 	"github.com/labstack/echo/v4"
@@ -13,16 +14,22 @@ type Server struct {
 	cfg    config.Config
 	engine *echo.Echo
 	//userRouter router.IUserRouter
+	ProductRouter  router.IProductRouter
+	CategoryRouter router.ICategoryRouter
 }
 
 func NewServer(
 	cfg config.Config,
 	engine *echo.Echo,
+	ProductRouter router.IProductRouter,
+	CategoryRouter router.ICategoryRouter,
 	//userRouter router.IUserRouter,
 ) *Server {
 	return &Server{
-		cfg:    cfg,
-		engine: engine,
+		cfg:            cfg,
+		engine:         engine,
+		ProductRouter:  ProductRouter,
+		CategoryRouter: CategoryRouter,
 		//userRouter: userRouter,
 	}
 
@@ -34,6 +41,8 @@ func (s *Server) BuildServer() {
 	s.engine.Use(middleware.Recover())
 
 	basePath := s.engine.Group("/api")
+	s.ProductRouter.ProductResource(basePath)
+	s.CategoryRouter.CategoryResource(basePath)
 	//s.userRouter.UserResource(basePath)
 	fmt.Println(basePath)
 

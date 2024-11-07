@@ -4,7 +4,11 @@ import (
 	"database/sql"
 	"fmt"
 	"github/thankeddeer/lastlayudas/config"
+	"github/thankeddeer/lastlayudas/internal/app"
 	"github/thankeddeer/lastlayudas/internal/infra/api"
+	"github/thankeddeer/lastlayudas/internal/infra/api/handler"
+	"github/thankeddeer/lastlayudas/internal/infra/api/router"
+	"github/thankeddeer/lastlayudas/internal/store/sqlc"
 	"log"
 
 	"github.com/labstack/echo/v4"
@@ -31,9 +35,21 @@ func (c *Container) Build() *api.Server {
 	fmt.Println(conn)
 	engine := echo.New()
 
+	store := sqlc.NewStore(conn)
+
+	ProductService := app.NewProductApp(store)
+	ProductHandler := handler.NewProductHandler(ProductService)
+	ProductRouter := router.NewProductRouter(ProductHandler)
+
+	CategoryService := app.NewCategoryApp(store)
+	CategoryHandler := handler.NewCategoryHandler(CategoryService)
+	CategoryRouter := router.NewCategoryRouter(CategoryHandler)
+
 	server := api.NewServer(
 		config,
 		engine,
+		ProductRouter,
+		CategoryRouter,
 	)
 	server.BuildServer()
 	return server
