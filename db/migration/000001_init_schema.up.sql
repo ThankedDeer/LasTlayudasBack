@@ -14,7 +14,7 @@ CREATE TABLE "category" (
   "category_id" serial PRIMARY KEY,
   "name" varchar(100) UNIQUE NOT NULL,
   "description" varchar(255),
-  "active" boolean DEFAULT true,
+  "is_active" boolean DEFAULT true,
   "created_at" timestamp DEFAULT current_timestamp,
   "updated_at" timestamp DEFAULT current_timestamp
 );
