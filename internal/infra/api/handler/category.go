@@ -102,7 +102,7 @@ func (u *CategoryHandler) UpdateCategory(c echo.Context) error {
 		CategoryID:  int32(id),
 		Name:        req.Name,
 		Description: description,
-		Active:      active,
+		IsActive:    active,
 	}
 
 	// Ejecutar la actualización de la categoría en la base de datos
