@@ -45,11 +45,16 @@ func (c *Container) Build() *api.Server {
 	CategoryHandler := handler.NewCategoryHandler(CategoryService)
 	CategoryRouter := router.NewCategoryRouter(CategoryHandler)
 
+	ProviderService := app.NewProviderApp(store)
+	ProviderHandler := handler.NewProviderHandler(ProviderService)
+	ProviderRouter := router.NewProviderRouter(ProviderHandler)
+
 	server := api.NewServer(
 		config,
 		engine,
 		ProductRouter,
 		CategoryRouter,
+		ProviderRouter,
 	)
 	server.BuildServer()
 	return server
