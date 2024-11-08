@@ -12,7 +12,7 @@ type Category struct {
 	CategoryID  int32          `json:"category_id"`
 	Name        string         `json:"name"`
 	Description sql.NullString `json:"description"`
-	Active      sql.NullBool   `json:"active"`
+	IsActive    sql.NullBool   `json:"is_active"`
 	CreatedAt   sql.NullTime   `json:"created_at"`
 	UpdatedAt   sql.NullTime   `json:"updated_at"`
 }

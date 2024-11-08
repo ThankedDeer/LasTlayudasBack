@@ -2,7 +2,7 @@
 INSERT INTO
     category (name, description, is_active)
 VALUES
-    ($ 1, $ 2, COALESCE($ 3, true)) RETURNING category_id,
+    ($1, $2, $3) RETURNING category_id,
     name,
     description,
     is_active,
@@ -20,7 +20,7 @@ SELECT
 FROM
     category
 WHERE
-    category_id = $ 1;
+    category_id = $1;
 
 -- name: GetCategoryByName :one
 SELECT
@@ -33,7 +33,7 @@ SELECT
 FROM
     category
 WHERE
-    name = $ 1;
+    name = $1;
 
 -- name: GetAllCategories :many
 SELECT
@@ -52,15 +52,15 @@ ORDER BY
 UPDATE
     category
 SET
-    name = $ 2,
-    description = $ 3,
-    is_active = $ 4,
+    name = $2,
+    description = $3,
+    is_active = $4,
     updated_at = current_timestamp
 WHERE
-    category_id = $ 1;
+    category_id = $1;
 
 -- name: DeleteCategory :exec
 DELETE FROM
     category
 WHERE
-    category_id = $ 1;
+    category_id = $1;
