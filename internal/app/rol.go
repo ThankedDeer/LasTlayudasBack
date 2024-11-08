@@ -7,17 +7,17 @@ import (
 	"github/thankeddeer/lastlayudas/internal/store/sqlc"
 )
 
-type RolApp struct {
+type RoleApp struct {
 	store *sqlc.Store
 }
 
-func NewRoleApp(store *sqlc.Store) RolApp {
-	return RolApp{
+func NewRoleApp(store *sqlc.Store) RoleApp {
+	return RoleApp{
 		store: store,
 	}
 }
 
-func (u *RolApp) CreateRole(ctx context.Context, name string, description *string) (sqlc.Role, error) {
+func (u *RoleApp) CreateRole(ctx context.Context, name string, description *string) (sqlc.Role, error) {
 	var rol sqlc.Role
 
 	err := u.store.ExecTx(ctx, func(q *sqlc.Queries) error {
@@ -39,25 +39,25 @@ func (u *RolApp) CreateRole(ctx context.Context, name string, description *strin
 	return rol, err
 }
 
-func (u *RolApp) DeleteRole(ctx context.Context, id int32) error {
+func (u *RoleApp) DeleteRole(ctx context.Context, id int32) error {
 	return u.store.ExecTx(ctx, func(q *sqlc.Queries) error {
 		return q.DeleteRole(ctx, id)
 	})
 }
 
-func (u *CategoryApp) GetAllRoles(ctx context.Context) ([]sqlc.Role, error) {
+func (u *RoleApp) GetAllRoles(ctx context.Context) ([]sqlc.Role, error) {
 	return u.store.GetAllRoles(ctx)
 }
 
-func (u *CategoryApp) GetRoleByID(ctx context.Context, id int32) (sqlc.Role, error) {
+func (u *RoleApp) GetRoleByID(ctx context.Context, id int32) (sqlc.Role, error) {
 	return u.store.GetRoleByID(ctx, id)
 }
 
-func (u *CategoryApp) GetRoleByName(ctx context.Context, name string) (sqlc.Role, error) {
+func (u *RoleApp) GetRoleByName(ctx context.Context, name string) (sqlc.Role, error) {
 	return u.store.GetRoleByName(ctx, name)
 }
 
-func (u *CategoryApp) UpdateRole(ctx context.Context, arg sqlc.UpdateRoleParams) error {
+func (u *RoleApp) UpdateRole(ctx context.Context, arg sqlc.UpdateRoleParams) error {
 	return u.store.ExecTx(ctx, func(q *sqlc.Queries) error {
 		return q.UpdateRole(ctx, arg)
 	})
