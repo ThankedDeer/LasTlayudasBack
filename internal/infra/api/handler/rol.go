@@ -54,7 +54,7 @@ func (u *RoleHandler) CreateRole(c echo.Context) error {
 	return c.JSON(http.StatusCreated, role)
 }
 
-func (u *RoleHandler) GetAllRole(c echo.Context) error {
+func (u *RoleHandler) GetAllRoles(c echo.Context) error {
 	roles, err := u.app.GetAllRoles(c.Request().Context())
 	if err != nil {
 		return c.JSON(http.StatusNotFound, map[string]string{"error": "Roles no encontrados"})
@@ -64,13 +64,12 @@ func (u *RoleHandler) GetAllRole(c echo.Context) error {
 }
 
 func (u *RoleHandler) UpdateRole(c echo.Context) error {
-	// Convertir el ID de categoría de la URL a entero
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "ID de rol inválido"})
 	}
 
-	var req dto.UpdateCategoryRequest
+	var req dto.UpdateRoleRequest
 	// Decodificar el JSON del cuerpo de la solicitud en req
 	if err := json.NewDecoder(c.Request().Body).Decode(&req); err != nil {
 		log.Println("Error de decodificación:", err) // Log para el error de decodificación
@@ -90,7 +89,6 @@ func (u *RoleHandler) UpdateRole(c echo.Context) error {
 		Description: description,
 	}
 
-	// Ejecutar la actualización de la categoría en la base de datos
 	if err := u.app.UpdateRole(c.Request().Context(), updateParams); err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
@@ -110,7 +108,7 @@ func (u *RoleHandler) DeleteRole(c echo.Context) error {
 	}
 
 	// Responder con un mensaje de éxito y código 200 OK
-	return c.JSON(http.StatusOK, map[string]string{"message": "Categoría eliminada correctamente"})
+	return c.JSON(http.StatusOK, map[string]string{"message": "Rol eliminada correctamente"})
 }
 
 func (u *RoleHandler) GetRoleByID(c echo.Context) error {

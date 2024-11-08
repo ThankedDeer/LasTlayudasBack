@@ -18,7 +18,7 @@ func NewRoleApp(store *sqlc.Store) RoleApp {
 }
 
 func (u *RoleApp) CreateRole(ctx context.Context, name string, description *string) (sqlc.Role, error) {
-	var rol sqlc.Role
+	var role sqlc.Role
 
 	err := u.store.ExecTx(ctx, func(q *sqlc.Queries) error {
 		newRol := sqlc.CreateRoleParams{
@@ -28,15 +28,15 @@ func (u *RoleApp) CreateRole(ctx context.Context, name string, description *stri
 				Valid:  true,
 			},
 		}
-		cat, err := q.CreateRole(ctx, newRol)
+		rol, err := q.CreateRole(ctx, newRol)
 		if err != nil {
 			return err
 		}
-		rol = cat
+		role = rol
 		return nil
 	})
 
-	return rol, err
+	return role, err
 }
 
 func (u *RoleApp) DeleteRole(ctx context.Context, id int32) error {
