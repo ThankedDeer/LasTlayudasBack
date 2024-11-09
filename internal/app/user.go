@@ -1,7 +1,5 @@
 package app
 
-import "github/thankeddeer/lastlayudas/internal/store/sqlc"
-
 // import (
 // 	"context"
 // 	"errors"
@@ -14,9 +12,9 @@ import "github/thankeddeer/lastlayudas/internal/store/sqlc"
 
 // )
 
-type UserApp struct {
-	store *sqlc.Store
-}
+// type UserApp struct {
+// 	store *sqlc.Store
+// }
 
 // func NewUserApp(store *sqlc.Store) UserApp {
 // 	return UserApp{
