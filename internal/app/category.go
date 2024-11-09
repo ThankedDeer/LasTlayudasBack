@@ -28,9 +28,12 @@ func (u *CategoryApp) CreateCategory(ctx context.Context, name string, descripti
 			Name: name,
 			Description: sql.NullString{
 				String: *description,
-				Valid:  false,
+				Valid:  true,
 			},
-			Column3: nil, // Cambia esto según tu necesidad
+			IsActive: sql.NullBool{
+				Bool:  active,
+				Valid: false,
+			},
 		}
 		cat, err := q.CreateCategory(ctx, arg)
 		if err != nil {
