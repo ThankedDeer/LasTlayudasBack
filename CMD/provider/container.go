@@ -48,7 +48,7 @@ func (c *Container) Build() *api.Server {
 	ProviderService := app.NewProviderApp(store)
 	ProviderHandler := handler.NewProviderHandler(ProviderService)
 	ProviderRouter := router.NewProviderRouter(ProviderHandler)
-	
+
 	RoleService := app.NewRoleApp(store)
 	RoleHandler := handler.NewRoleHandler(RoleService)
 	RoleRouter := router.NewRoleRouter(RoleHandler)
@@ -59,7 +59,7 @@ func (c *Container) Build() *api.Server {
 		ProductRouter,
 		CategoryRouter,
 		ProviderRouter,
-		RoleRouter
+		RoleRouter,
 	)
 	server.BuildServer()
 	return server
