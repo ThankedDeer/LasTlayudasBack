@@ -30,5 +30,8 @@ start:
 
 init:
 	make postgres createdb rundb migrateup sqlc
+
+restart:
+	make dropdb createdb migrateup
 	
 .POHNY: postgres createbd dropdb rundb migrateup migratedown sqlc test server start init

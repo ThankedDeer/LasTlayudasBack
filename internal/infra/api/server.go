@@ -16,7 +16,11 @@ type Server struct {
 	//userRouter router.IUserRouter
 	ProductRouter  router.IProductRouter
 	CategoryRouter router.ICategoryRouter
+<<<<<<< HEAD
 	RoleRouter     router.IRoleRouter
+=======
+	ProviderRouter router.IProviderRouter
+>>>>>>> 527701dacf12d3913658eaf7c3ea73c632515df6
 }
 
 func NewServer(
@@ -24,7 +28,11 @@ func NewServer(
 	engine *echo.Echo,
 	ProductRouter router.IProductRouter,
 	CategoryRouter router.ICategoryRouter,
+<<<<<<< HEAD
 	RoleRouter router.IRoleRouter,
+=======
+	ProviderRouter router.IProviderRouter,
+>>>>>>> 527701dacf12d3913658eaf7c3ea73c632515df6
 	//userRouter router.IUserRouter,
 ) *Server {
 	return &Server{
@@ -32,7 +40,11 @@ func NewServer(
 		engine:         engine,
 		ProductRouter:  ProductRouter,
 		CategoryRouter: CategoryRouter,
+<<<<<<< HEAD
 		RoleRouter:     RoleRouter,
+=======
+		ProviderRouter: ProviderRouter,
+>>>>>>> 527701dacf12d3913658eaf7c3ea73c632515df6
 		//userRouter: userRouter,
 	}
 
@@ -46,7 +58,11 @@ func (s *Server) BuildServer() {
 	basePath := s.engine.Group("/api")
 	s.ProductRouter.ProductResource(basePath)
 	s.CategoryRouter.CategoryResource(basePath)
+<<<<<<< HEAD
 	s.RoleRouter.RoleResource(basePath)
+=======
+	s.ProviderRouter.ProviderResource(basePath)
+>>>>>>> 527701dacf12d3913658eaf7c3ea73c632515df6
 	//s.userRouter.UserResource(basePath)
 	fmt.Println(basePath)
 
