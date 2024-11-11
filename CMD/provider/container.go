@@ -53,6 +53,10 @@ func (c *Container) Build() *api.Server {
 	RoleHandler := handler.NewRoleHandler(RoleService)
 	RoleRouter := router.NewRoleRouter(RoleHandler)
 
+	OrderStatusService := app.NewOrderStatusApp(store)
+	OrderStatusHandler := handler.NewOrderStatusHandler(OrderStatusService)
+	OrderStatusRouter := router.NewOrdeStatusRouter(OrderStatusHandler)
+
 	server := api.NewServer(
 		config,
 		engine,
@@ -60,6 +64,7 @@ func (c *Container) Build() *api.Server {
 		CategoryRouter,
 		ProviderRouter,
 		RoleRouter,
+		OrderStatusRouter,
 	)
 	server.BuildServer()
 	return server
