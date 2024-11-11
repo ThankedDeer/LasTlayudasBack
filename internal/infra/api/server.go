@@ -53,6 +53,7 @@ func (s *Server) BuildServer() {
 	s.ProductRouter.ProductResource(basePath)
 	s.CategoryRouter.CategoryResource(basePath)
 	s.ProviderRouter.ProviderResource(basePath)
+	s.OrderStatusRouter.OrderStatusResource(basePath)
 	//s.userRouter.UserResource(basePath)
 	fmt.Println(basePath)
 

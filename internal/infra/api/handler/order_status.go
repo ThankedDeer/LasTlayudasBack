@@ -111,7 +111,7 @@ func (u *OrderStatusHandler) DeleteOrderStatus(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{"message": "Estatus eliminado correctamente"})
 }
 
-func (u *OrderStatusHandler) GetOrdeStatusByID(c echo.Context) error {
+func (u *OrderStatusHandler) GetOrderStatusByID(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "ID del estatus inválido"})
