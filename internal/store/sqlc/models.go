@@ -6,48 +6,113 @@ package sqlc
 
 import (
 	"database/sql"
-	"time"
 )
 
-type Permissions struct {
+type Category struct {
+	CategoryID  int32          `json:"category_id"`
+	Name        string         `json:"name"`
+	Description sql.NullString `json:"description"`
+	IsActive    sql.NullBool   `json:"is_active"`
+	CreatedAt   sql.NullTime   `json:"created_at"`
+	UpdatedAt   sql.NullTime   `json:"updated_at"`
+}
+
+type Order struct {
+	OrderID   int32        `json:"order_id"`
+	OrderDate sql.NullTime `json:"order_date"`
+	TableID   int32        `json:"table_id"`
+	StatusID  int32        `json:"status_id"`
+}
+
+type OrderProduct struct {
+	OrderProductID int32 `json:"order_product_id"`
+	OrderID        int32 `json:"order_id"`
+	ProductID      int32 `json:"product_id"`
+	Quantity       int32 `json:"quantity"`
+}
+
+type OrderStatus struct {
+	OrderStatusID int32          `json:"order_status_id"`
+	Name          string         `json:"name"`
+	Description   sql.NullString `json:"description"`
+	CreatedAt     sql.NullTime   `json:"created_at"`
+}
+
+type Permission struct {
 	PermissionID int32          `json:"permission_id"`
 	Name         string         `json:"name"`
 	Description  sql.NullString `json:"description"`
+	CreatedAt    sql.NullTime   `json:"created_at"`
+	UpdatedAt    sql.NullTime   `json:"updated_at"`
 }
 
-type RolePermissions struct {
-	RoleID       int32     `json:"role_id"`
-	PermissionID int32     `json:"permission_id"`
-	AssignedAt   time.Time `json:"assigned_at"`
+type Product struct {
+	ProductID     int32        `json:"product_id"`
+	Name          string       `json:"name"`
+	PurchasePrice string       `json:"purchase_price"`
+	SalePrice     string       `json:"sale_price"`
+	Stock         int32        `json:"stock"`
+	CategoryID    int32        `json:"category_id"`
+	ProviderID    int32        `json:"provider_id"`
+	CreatedAt     sql.NullTime `json:"created_at"`
+	UpdatedAt     sql.NullTime `json:"updated_at"`
 }
 
-type Roles struct {
+type Provider struct {
+	ProviderID int32        `json:"provider_id"`
+	Name       string       `json:"name"`
+	Phone      string       `json:"phone"`
+	Email      string       `json:"email"`
+	Address    string       `json:"address"`
+	CreatedAt  sql.NullTime `json:"created_at"`
+	UpdatedAt  sql.NullTime `json:"updated_at"`
+}
+
+type RestaurantTable struct {
+	TableID   int32        `json:"table_id"`
+	Number    int32        `json:"number"`
+	WaiterID  int32        `json:"waiter_id"`
+	StatusID  int32        `json:"status_id"`
+	CreatedAt sql.NullTime `json:"created_at"`
+	UpdatedAt sql.NullTime `json:"updated_at"`
+}
+
+type Role struct {
 	RoleID      int32          `json:"role_id"`
 	Name        string         `json:"name"`
 	Description sql.NullString `json:"description"`
+	CreatedAt   sql.NullTime   `json:"created_at"`
+	UpdatedAt   sql.NullTime   `json:"updated_at"`
 }
 
-type Testimonials struct {
-	TestimonialID int32     `json:"testimonial_id"`
-	Title         string    `json:"title"`
-	Testimonial   string    `json:"testimonial"`
-	UserID        int32     `json:"user_id"`
-	CreatedAt     time.Time `json:"created_at"`
-	UpdatedAt     time.Time `json:"updated_at"`
+type RolePermission struct {
+	RolePermissionID int32        `json:"role_permission_id"`
+	RoleID           int32        `json:"role_id"`
+	PermissionID     int32        `json:"permission_id"`
+	CreatedAt        sql.NullTime `json:"created_at"`
 }
 
-type UserRoles struct {
-	UserID     int32     `json:"user_id"`
-	RoleID     int32     `json:"role_id"`
-	AssignedAt time.Time `json:"assigned_at"`
+type TableStatus struct {
+	TableStatusID int32          `json:"table_status_id"`
+	Name          string         `json:"name"`
+	Description   sql.NullString `json:"description"`
+	CreatedAt     sql.NullTime   `json:"created_at"`
 }
 
-type Users struct {
-	UserID            int32     `json:"user_id"`
-	Firstname         string    `json:"firstname"`
-	Lastname          string    `json:"lastname"`
-	Password          string    `json:"password"`
-	Email             string    `json:"email"`
-	PasswordChangedAt time.Time `json:"password_changed_at"`
-	CreatedAt         time.Time `json:"created_at"`
+type User struct {
+	UserID    int32        `json:"user_id"`
+	RoleID    int32        `json:"role_id"`
+	FirstName string       `json:"first_name"`
+	LastName  string       `json:"last_name"`
+	Email     string       `json:"email"`
+	Password  string       `json:"password"`
+	Active    sql.NullBool `json:"active"`
+	CreatedAt sql.NullTime `json:"created_at"`
+	UpdatedAt sql.NullTime `json:"updated_at"`
+}
+
+type Waiter struct {
+	WaiterID  int32        `json:"waiter_id"`
+	UserID    int32        `json:"user_id"`
+	CreatedAt sql.NullTime `json:"created_at"`
 }

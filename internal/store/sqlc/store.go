@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
 )
 
 // Store provides all function to execute db queries and transactions
@@ -21,7 +22,7 @@ func NewStore(db *sql.DB) *Store {
 }
 
 // execTx exectes a function within a database transaction
-func (Store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
+func (Store *Store) ExecTx(ctx context.Context, fn func(*Queries) error) error {
 	tx, err := Store.db.BeginTx(ctx, nil)
 
 	if err != nil {
@@ -42,37 +43,38 @@ func (Store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
 
 }
 
-type UpdatePasswordTxParams struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-type updatedPasswordTxResult struct {
-	User Users `json:"user"`
-}
+//type UpdatePasswordTxParams struct {
+//Email    string `json:"email"`
+//Password string `json:"password"`
+//}
+//type updatedPasswordTxResult struct {
+//User Users `json:"user"`
+//}
 
-func (store *Store) UpdateUserPasswordTx(ctx context.Context, arg UpdatePasswordTxParams) (updatedPasswordTxResult, error) {
+//func (store *Store) UpdateUserPasswordTx(ctx context.Context, arg UpdatePasswordTxParams) (updatedPasswordTxResult, error) {
 
-	var result updatedPasswordTxResult
+//var result updatedPasswordTxResult
 
-	err := store.execTx(ctx, func(q *Queries) error {
-		var err error
+//err := store.execTx(ctx, func(q *Queries) error {
+//var err error
 
-		result.User, err = q.GetUserForUpdate(ctx, 1)
+//result.User, err = q.GetUserForUpdate(ctx, 1)
 
-		if err != nil {
-			return err
-		}
+//if err != nil {
+//return err
+//}
 
-		result.User, err = q.UpdatPassword(ctx, UpdatPasswordParams(arg))
+//result.User, err = q.UpdatPassword(ctx, UpdatPasswordParams(arg))
 
-		if err != nil {
-			return err
-		}
+//if err != nil {
+//return err
+//}
 
-		return nil
+//return nil
 
-	})
+//
+//)
 
-	return result, err
+//return result, err
 
-}
+//}

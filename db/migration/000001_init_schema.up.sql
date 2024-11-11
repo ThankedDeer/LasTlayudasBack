@@ -1,115 +1,123 @@
--- Tabla de Roles
-CREATE TABLE "Tb_Rol" (
-  "ID_Rol" SERIAL PRIMARY KEY, -- Usamos SERIAL para generar automáticamente el ID
-  "Rol" VARCHAR(100) NOT NULL UNIQUE, -- Aseguramos que el nombre del rol sea único
-  "Descripcion" VARCHAR(255) -- Descripción del rol
+CREATE TABLE "provider" (
+  "provider_id" serial PRIMARY KEY,
+  "name" varchar(255) UNIQUE NOT NULL,
+  "phone" varchar(20) UNIQUE NOT NULL,
+  "email" varchar(255) UNIQUE NOT NULL,
+  "address" varchar(255) NOT NULL,
+  "created_at" timestamp DEFAULT current_timestamp,
+  "updated_at" timestamp DEFAULT current_timestamp
 );
 
--- Tabla de Permisos
-CREATE TABLE "Tb_Permission" (
-  "ID_Permission" SERIAL PRIMARY KEY,
-  "Permission" VARCHAR(100) NOT NULL UNIQUE,
-  "Descripcion" VARCHAR(255) -- Descripción del permiso
+
+
+CREATE TABLE "category" (
+  "category_id" serial PRIMARY KEY,
+  "name" varchar(100) UNIQUE NOT NULL,
+  "description" varchar(255),
+  "is_active" boolean DEFAULT true,
+  "created_at" timestamp DEFAULT current_timestamp,
+  "updated_at" timestamp DEFAULT current_timestamp
 );
 
--- Tabla de Usuarios
-CREATE TABLE "Tb_User" (
-  "ID_User" SERIAL PRIMARY KEY,
-  "ID_Rol" INT NOT NULL,
-  "First_Name" VARCHAR(100) NOT NULL,
-  "Last_Name" VARCHAR(100) NOT NULL,
-  "Email" VARCHAR(150) NOT NULL UNIQUE,
-  "Password" VARCHAR(255) NOT NULL,
-  "Created_At" TIMESTAMP NOT NULL DEFAULT NOW(),
-  "Active" BOOLEAN NOT NULL DEFAULT TRUE,
-  CONSTRAINT fk_rol FOREIGN KEY ("ID_Rol") REFERENCES "Tb_Rol" ("ID_Rol") ON DELETE CASCADE
+CREATE TABLE "product" (
+  "product_id" serial PRIMARY KEY,
+  "name" varchar(255) UNIQUE NOT NULL,
+  "purchase_price" decimal(10, 2) NOT NULL,
+  "sale_price" decimal(10, 2) NOT NULL,
+  "stock" integer NOT NULL,
+  "category_id" integer NOT NULL,
+  "provider_id" integer NOT NULL,
+  "created_at" timestamp DEFAULT current_timestamp,
+  "updated_at" timestamp DEFAULT current_timestamp,
+  FOREIGN KEY ("category_id") REFERENCES "category" ("category_id"),
+  FOREIGN KEY ("provider_id") REFERENCES "provider" ("provider_id")
 );
 
--- Tabla de Relación entre Roles y Permisos
-CREATE TABLE "Tb_RolPermission" (
-  "ID_RolPermission" SERIAL PRIMARY KEY,
-  "ID_Rol" INT NOT NULL,
-  "ID_Permission" INT NOT NULL,
-  CONSTRAINT fk_rol_permission_rol FOREIGN KEY ("ID_Rol") REFERENCES "Tb_Rol" ("ID_Rol") ON DELETE CASCADE,
-  CONSTRAINT fk_rol_permission_perm FOREIGN KEY ("ID_Permission") REFERENCES "Tb_Permission" ("ID_Permission") ON DELETE CASCADE
+CREATE TABLE "role" (
+  "role_id" serial PRIMARY KEY,
+  "name" varchar(50) UNIQUE NOT NULL,
+  "description" varchar(255),
+  "created_at" timestamp DEFAULT current_timestamp,
+  "updated_at" timestamp DEFAULT current_timestamp
 );
 
--- Tabla de Estados de Mesas
-CREATE TABLE "Tb_StatusMesa" (
-  "ID_StatusMesa" SERIAL PRIMARY KEY,
-  "Status" VARCHAR(100) NOT NULL UNIQUE,
-  "Descripcion" VARCHAR(255) -- Descripción del estado de la mesa
+CREATE TABLE "permission" (
+  "permission_id" serial PRIMARY KEY,
+  "name" varchar(50) UNIQUE NOT NULL,
+  "description" varchar(255),
+  "created_at" timestamp DEFAULT current_timestamp,
+  "updated_at" timestamp DEFAULT current_timestamp
 );
 
--- Tabla de Meseros
-CREATE TABLE "Tb_Mesero" (
-  "ID_Mesero" SERIAL PRIMARY KEY,
-  "ID_User" INT NOT NULL UNIQUE,
-  CONSTRAINT fk_mesero_user FOREIGN KEY ("ID_User") REFERENCES "Tb_User" ("ID_User") ON DELETE CASCADE
+CREATE TABLE "role_permission" (
+  "role_permission_id" serial PRIMARY KEY,
+  "role_id" integer NOT NULL,
+  "permission_id" integer NOT NULL,
+  "created_at" timestamp DEFAULT current_timestamp,
+  FOREIGN KEY ("role_id") REFERENCES "role" ("role_id"),
+  FOREIGN KEY ("permission_id") REFERENCES "permission" ("permission_id")
 );
 
--- Tabla de Mesas
-CREATE TABLE "Tb_Mesa" (
-  "ID_Mesa" SERIAL PRIMARY KEY,
-  "Numero_Mesa" INT NOT NULL UNIQUE,
-  "ID_Mesero" INT NOT NULL,
-  "ID_StatusMesa" INT NOT NULL,
-  CONSTRAINT fk_mesa_mesero FOREIGN KEY ("ID_Mesero") REFERENCES "Tb_Mesero" ("ID_Mesero") ON DELETE SET NULL,
-  CONSTRAINT fk_mesa_status FOREIGN KEY ("ID_StatusMesa") REFERENCES "Tb_StatusMesa" ("ID_StatusMesa") ON DELETE SET NULL
+CREATE TABLE "user" (
+  "user_id" serial PRIMARY KEY,
+  "role_id" integer NOT NULL,
+  "first_name" varchar(100) NOT NULL,
+  "last_name" varchar(100) NOT NULL,
+  "email" varchar(255) UNIQUE NOT NULL,
+  "password" varchar(255) NOT NULL,
+  "active" boolean DEFAULT true,
+  "created_at" timestamp DEFAULT current_timestamp,
+  "updated_at" timestamp DEFAULT current_timestamp,
+  FOREIGN KEY ("role_id") REFERENCES "role" ("role_id")
 );
 
--- Tabla de Categorías
-CREATE TABLE "Tb_Categoria" (
-  "ID_Categoria" SERIAL PRIMARY KEY,
-  "Categoria" VARCHAR(100) NOT NULL UNIQUE,
-  "Active" BOOLEAN NOT NULL DEFAULT TRUE,
-  "Descripcion" VARCHAR(255) -- Descripción de la categoría
+CREATE TABLE "waiter" (
+  "waiter_id" serial PRIMARY KEY,
+  "user_id" integer UNIQUE NOT NULL,
+  "created_at" timestamp DEFAULT current_timestamp,
+  FOREIGN KEY ("user_id") REFERENCES "user" ("user_id")
 );
 
--- Tabla de Proveedores
-CREATE TABLE "Tb_Proovedor" (
-  "ID_Proovedor" SERIAL PRIMARY KEY,
-  "Nombre_Proovedor" VARCHAR(100) NOT NULL UNIQUE,
-  "Telefono" VARCHAR(20) NOT NULL UNIQUE,
-  "Correo" VARCHAR(150) NOT NULL UNIQUE,
-  "Direccion" VARCHAR(255) NOT NULL
+CREATE TABLE "table_status" (
+  "table_status_id" serial PRIMARY KEY,
+  "name" varchar(100) NOT NULL,
+  "description" varchar(255),
+  "created_at" timestamp DEFAULT current_timestamp
 );
 
--- Tabla de Productos
-CREATE TABLE "Tb_Producto" (
-  "ID_Producto" SERIAL PRIMARY KEY,
-  "Nombre_Producto" VARCHAR(150) NOT NULL UNIQUE,
-  "Precio_Compra" DECIMAL(10, 2) NOT NULL,
-  "Precio_Venta" DECIMAL(10, 2) NOT NULL,
-  "ID_Categoria" INT NOT NULL,
-  "Stock" INT NOT NULL CHECK (Stock >= 0),
-  "ID_Proovedor" INT NOT NULL,
-  CONSTRAINT fk_producto_categoria FOREIGN KEY ("ID_Categoria") REFERENCES "Tb_Categoria" ("ID_Categoria") ON DELETE SET NULL,
-  CONSTRAINT fk_producto_proveedor FOREIGN KEY ("ID_Proovedor") REFERENCES "Tb_Proovedor" ("ID_Proovedor") ON DELETE SET NULL
+CREATE TABLE "restaurant_table" (
+  "table_id" serial PRIMARY KEY,
+  "number" integer UNIQUE NOT NULL,
+  "waiter_id" integer NOT NULL,
+  "status_id" integer NOT NULL,
+  "created_at" timestamp DEFAULT current_timestamp,
+  "updated_at" timestamp DEFAULT current_timestamp,
+  FOREIGN KEY ("waiter_id") REFERENCES "waiter" ("waiter_id"),
+  FOREIGN KEY ("status_id") REFERENCES "table_status" ("table_status_id")
 );
 
--- Tabla de Estados de Pedido
-CREATE TABLE "Tb_StatusPedido" (
-  "ID_StatusPedido" SERIAL PRIMARY KEY,
-  "Status_Pedido" VARCHAR(100) NOT NULL,
-  "Descripcion" VARCHAR(255) -- Descripción del estado del pedido
+CREATE TABLE "order_status" (
+  "order_status_id" serial PRIMARY KEY,
+  "name" varchar(100) NOT NULL,
+  "description" varchar(255),
+  "created_at" timestamp DEFAULT current_timestamp
 );
 
--- Tabla de Pedidos
-CREATE TABLE "Tb_Pedido" (
-  "ID_Pedido" SERIAL PRIMARY KEY,
-  "Order_Date" TIMESTAMP NOT NULL DEFAULT NOW(),
-  "ID_Mesa" INT NOT NULL,
-  "ID_StatusPedido" INT NOT NULL,
-  CONSTRAINT fk_pedido_mesa FOREIGN KEY ("ID_Mesa") REFERENCES "Tb_Mesa" ("ID_Mesa") ON DELETE SET NULL,
-  CONSTRAINT fk_pedido_status FOREIGN KEY ("ID_StatusPedido") REFERENCES "Tb_StatusPedido" ("ID_StatusPedido") ON DELETE SET NULL
+CREATE TABLE "order" (
+  "order_id" serial PRIMARY KEY,
+  "order_date" timestamp DEFAULT current_timestamp,
+  "table_id" integer NOT NULL,
+  "status_id" integer NOT NULL,
+  FOREIGN KEY ("table_id") REFERENCES "restaurant_table" ("table_id"),
+  FOREIGN KEY ("status_id") REFERENCES "order_status" ("order_status_id")
 );
 
--- Tabla de Productos en Pedido
-CREATE TABLE "Tb_PedidoProductos" (
-  "ID_PedidoProductos" SERIAL PRIMARY KEY,
-  "ID_Producto" INT NOT NULL,
-  "ID_Pedido" INT NOT NULL,
-  CONSTRAINT fk_pedido_productos_pedido FOREIGN KEY ("ID_Pedido") REFERENCES "Tb_Pedido" ("ID_Pedido") ON DELETE CASCADE,
-  CONSTRAINT fk_pedido_productos_producto FOREIGN KEY ("ID_Producto") REFERENCES "Tb_Producto" ("ID_Producto") ON DELETE CASCADE
+CREATE TABLE "order_product" (
+  "order_product_id" serial PRIMARY KEY,
+  "order_id" integer NOT NULL,
+  "product_id" integer NOT NULL,
+  "quantity" integer NOT NULL DEFAULT 1,
+  FOREIGN KEY ("order_id") REFERENCES "order" ("order_id"),
+  FOREIGN KEY ("product_id") REFERENCES "product" ("product_id")
 );
+

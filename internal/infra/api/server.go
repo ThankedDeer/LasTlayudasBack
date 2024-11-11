@@ -11,20 +11,32 @@ import (
 )
 
 type Server struct {
-	cfg        config.Config
-	engine     *echo.Echo
-	userRouter router.IUserRouter
+	cfg    config.Config
+	engine *echo.Echo
+	//userRouter router.IUserRouter
+	ProductRouter  router.IProductRouter
+	CategoryRouter router.ICategoryRouter
+	ProviderRouter router.IProviderRouter
+	RoleRouter     router.IRoleRouter
 }
 
 func NewServer(
 	cfg config.Config,
 	engine *echo.Echo,
-	userRouter router.IUserRouter,
+	ProductRouter router.IProductRouter,
+	CategoryRouter router.ICategoryRouter,
+	ProviderRouter router.IProviderRouter,
+	RoleRouter router.IRoleRouter,
+	//userRouter router.IUserRouter,
 ) *Server {
 	return &Server{
-		cfg:        cfg,
-		engine:     engine,
-		userRouter: userRouter,
+		cfg:            cfg,
+		engine:         engine,
+		ProductRouter:  ProductRouter,
+		CategoryRouter: CategoryRouter,
+		ProviderRouter: ProviderRouter,
+		RoleRouter:     RoleRouter,
+		//userRouter: userRouter,
 	}
 
 }
@@ -35,7 +47,12 @@ func (s *Server) BuildServer() {
 	s.engine.Use(middleware.Recover())
 
 	basePath := s.engine.Group("/api")
-	s.userRouter.UserResource(basePath)
+	s.ProductRouter.ProductResource(basePath)
+	s.CategoryRouter.CategoryResource(basePath)
+	s.ProviderRouter.ProviderResource(basePath)
+	//s.userRouter.UserResource(basePath)
+	fmt.Println(basePath)
+
 }
 
 func (s *Server) Run() error {

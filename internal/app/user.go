@@ -1,109 +1,111 @@
 package app
 
-import (
-	"context"
-	"errors"
-	"fmt"
-	"github/thankeddeer/lastlayudas/internal/domain/dto"
-	"github/thankeddeer/lastlayudas/internal/store/sqlc"
+// import (
+// 	"context"
+// 	"errors"
+// 	"fmt"
+// 	"github/thankeddeer/lastlayudas/internal/domain/dto"
+// 	"github/thankeddeer/lastlayudas/internal/store/sqlc"
+//
 
-	"golang.org/x/crypto/bcrypt"
-)
+// 	"golang.org/x/crypto/bcrypt"
 
-type UserApp struct {
-	store *sqlc.Store
-}
+// )
 
-func NewUserApp(store *sqlc.Store) UserApp {
-	return UserApp{
-		store: store,
-	}
-}
+// type UserApp struct {
+// 	store *sqlc.Store
+// }
 
-func (u *UserApp) CreateUser(data dto.CreateUserRequest) (*sqlc.Users, error) {
+// func NewUserApp(store *sqlc.Store) UserApp {
+// 	return UserApp{
+// 		store: store,
+// 	}
+// }
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return nil, err
-	}
+// func (u *UserApp) CreateUser(data dto.CreateUserRequest) (*sqlc.Users, error) {
 
-	data.Password = string(hashedPassword)
+// 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	user, err := u.store.CreateUser(context.Background(), sqlc.CreateUserParams(data))
-	if err != nil {
-		return nil, err
-	}
+// 	data.Password = string(hashedPassword)
 
-	userRole, err := u.store.CreateUserRole(context.Background(), sqlc.CreateUserRoleParams{
-		UserID: user.UserID,
-		RoleID: 1,
-	})
+// 	user, err := u.store.CreateUser(context.Background(), sqlc.CreateUserParams(data))
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	if err != nil {
-		return nil, err
-	}
+// 	userRole, err := u.store.CreateUserRole(context.Background(), sqlc.CreateUserRoleParams{
+// 		UserID: user.UserID,
+// 		RoleID: 1,
+// 	})
 
-	fmt.Println(userRole)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return &user, nil
-}
+// 	fmt.Println(userRole)
 
-func (u *UserApp) GetUsers() ([]sqlc.GetUsersWithRolesRow, error) {
+// 	return &user, nil
+// }
 
-	users, err := u.store.GetUsersWithRoles(context.Background())
-	if err != nil {
-		return nil, err
-	}
+// func (u *UserApp) GetUsers() ([]sqlc.GetUsersWithRolesRow, error) {
 
-	if len(users) == 0 {
-		return nil, errors.New("no se encontraron usuarios")
-	}
+// 	users, err := u.store.GetUsersWithRoles(context.Background())
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return users, nil
-}
+// 	if len(users) == 0 {
+// 		return nil, errors.New("no se encontraron usuarios")
+// 	}
 
-func (u *UserApp) UpdateUser(data sqlc.UpdatUserParams) error {
+// 	return users, nil
+// }
 
-	arg := sqlc.UpdatUserParams{
-		UserID:    data.UserID,
-		Firstname: data.Firstname,
-		Lastname:  data.Lastname,
-		Password:  data.Password,
-		Email:     data.Email,
-	}
+// func (u *UserApp) UpdateUser(data sqlc.UpdatUserParams) error {
 
-	err := u.store.UpdatUser(context.Background(), arg)
-	if err != nil {
-		return err
-	}
+// 	arg := sqlc.UpdatUserParams{
+// 		UserID:    data.UserID,
+// 		Firstname: data.Firstname,
+// 		Lastname:  data.Lastname,
+// 		Password:  data.Password,
+// 		Email:     data.Email,
+// 	}
 
-	return nil
-}
+// 	err := u.store.UpdatUser(context.Background(), arg)
+// 	if err != nil {
+// 		return err
+// 	}
 
-func (u *UserApp) CreateTestimonial(data dto.CreateTestimonial) (*sqlc.Testimonials, error) {
+// 	return nil
+// }
 
-	arg := sqlc.CreateTestimonialParams{
-		Title:       data.Title,
-		Testimonial: data.Testimonial,
-		UserID:      5,
-	}
-	testimonial, err := u.store.CreateTestimonial(context.Background(), arg)
-	if err != nil {
-		return nil, err
-	}
+// func (u *UserApp) CreateTestimonial(data dto.CreateTestimonial) (*sqlc.Testimonials, error) {
 
-	return &testimonial, nil
-}
+// 	arg := sqlc.CreateTestimonialParams{
+// 		Title:       data.Title,
+// 		Testimonial: data.Testimonial,
+// 		UserID:      5,
+// 	}
+// 	testimonial, err := u.store.CreateTestimonial(context.Background(), arg)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-func (u *UserApp) GetTestimonial() ([]sqlc.Testimonials, error) {
+// 	return &testimonial, nil
+// }
 
-	testimonial, err := u.store.GetTestimonials(context.Background())
-	if err != nil {
-		return nil, err
-	}
-	if len(testimonial) == 0 {
-		return nil, errors.New("no existen testimonios")
-	}
+// func (u *UserApp) GetTestimonial() ([]sqlc.Testimonials, error) {
 
-	return testimonial, nil
-}
+// 	testimonial, err := u.store.GetTestimonials(context.Background())
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	if len(testimonial) == 0 {
+// 		return nil, errors.New("no existen testimonios")
+// 	}
+
+// 	return testimonial, nil
+// }
