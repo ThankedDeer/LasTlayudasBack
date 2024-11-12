@@ -9,110 +9,110 @@ import (
 )
 
 type Category struct {
-	CategoryID  int32          `json:"category_id"`
-	Name        string         `json:"name"`
-	Description sql.NullString `json:"description"`
-	IsActive    sql.NullBool   `json:"is_active"`
-	CreatedAt   sql.NullTime   `json:"created_at"`
-	UpdatedAt   sql.NullTime   `json:"updated_at"`
+	CategoryID  int32
+	Name        string
+	Description sql.NullString
+	IsActive    sql.NullBool
+	CreatedAt   sql.NullTime
+	UpdatedAt   sql.NullTime
 }
 
 type Order struct {
-	OrderID   int32        `json:"order_id"`
-	OrderDate sql.NullTime `json:"order_date"`
-	TableID   int32        `json:"table_id"`
-	StatusID  int32        `json:"status_id"`
+	OrderID   int32
+	OrderDate sql.NullTime
+	TableID   int32
+	StatusID  int32
 }
 
 type OrderProduct struct {
-	OrderProductID int32 `json:"order_product_id"`
-	OrderID        int32 `json:"order_id"`
-	ProductID      int32 `json:"product_id"`
-	Quantity       int32 `json:"quantity"`
+	OrderProductID int32
+	OrderID        int32
+	ProductID      int32
+	Quantity       int32
 }
 
 type OrderStatus struct {
-	OrderStatusID int32          `json:"order_status_id"`
-	Name          string         `json:"name"`
-	Description   sql.NullString `json:"description"`
-	CreatedAt     sql.NullTime   `json:"created_at"`
+	OrderStatusID int32
+	Name          string
+	Description   sql.NullString
+	CreatedAt     sql.NullTime
 }
 
 type Permission struct {
-	PermissionID int32          `json:"permission_id"`
-	Name         string         `json:"name"`
-	Description  sql.NullString `json:"description"`
-	CreatedAt    sql.NullTime   `json:"created_at"`
-	UpdatedAt    sql.NullTime   `json:"updated_at"`
+	PermissionID int32
+	Name         string
+	Description  sql.NullString
+	CreatedAt    sql.NullTime
+	UpdatedAt    sql.NullTime
 }
 
 type Product struct {
-	ProductID     int32        `json:"product_id"`
-	Name          string       `json:"name"`
-	PurchasePrice string       `json:"purchase_price"`
-	SalePrice     string       `json:"sale_price"`
-	Stock         int32        `json:"stock"`
-	CategoryID    int32        `json:"category_id"`
-	ProviderID    int32        `json:"provider_id"`
-	CreatedAt     sql.NullTime `json:"created_at"`
-	UpdatedAt     sql.NullTime `json:"updated_at"`
+	ProductID     int32
+	Name          string
+	PurchasePrice string
+	SalePrice     string
+	Stock         int32
+	CategoryID    int32
+	ProviderID    int32
+	CreatedAt     sql.NullTime
+	UpdatedAt     sql.NullTime
 }
 
 type Provider struct {
-	ProviderID int32        `json:"provider_id"`
-	Name       string       `json:"name"`
-	Phone      string       `json:"phone"`
-	Email      string       `json:"email"`
-	Address    string       `json:"address"`
-	CreatedAt  sql.NullTime `json:"created_at"`
-	UpdatedAt  sql.NullTime `json:"updated_at"`
+	ProviderID int32
+	Name       string
+	Phone      string
+	Email      string
+	Address    string
+	CreatedAt  sql.NullTime
+	UpdatedAt  sql.NullTime
 }
 
 type RestaurantTable struct {
-	TableID   int32        `json:"table_id"`
-	Number    int32        `json:"number"`
-	WaiterID  int32        `json:"waiter_id"`
-	StatusID  int32        `json:"status_id"`
-	CreatedAt sql.NullTime `json:"created_at"`
-	UpdatedAt sql.NullTime `json:"updated_at"`
+	TableID   int32
+	Number    int32
+	WaiterID  int32
+	StatusID  int32
+	CreatedAt sql.NullTime
+	UpdatedAt sql.NullTime
 }
 
 type Role struct {
-	RoleID      int32          `json:"role_id"`
-	Name        string         `json:"name"`
-	Description sql.NullString `json:"description"`
-	CreatedAt   sql.NullTime   `json:"created_at"`
-	UpdatedAt   sql.NullTime   `json:"updated_at"`
+	RoleID      int32
+	Name        string
+	Description sql.NullString
+	CreatedAt   sql.NullTime
+	UpdatedAt   sql.NullTime
 }
 
 type RolePermission struct {
-	RolePermissionID int32        `json:"role_permission_id"`
-	RoleID           int32        `json:"role_id"`
-	PermissionID     int32        `json:"permission_id"`
-	CreatedAt        sql.NullTime `json:"created_at"`
+	RolePermissionID int32
+	RoleID           int32
+	PermissionID     int32
+	CreatedAt        sql.NullTime
 }
 
 type TableStatus struct {
-	TableStatusID int32          `json:"table_status_id"`
-	Name          string         `json:"name"`
-	Description   sql.NullString `json:"description"`
-	CreatedAt     sql.NullTime   `json:"created_at"`
+	TableStatusID int32
+	Name          string
+	Description   sql.NullString
+	CreatedAt     sql.NullTime
 }
 
 type User struct {
-	UserID    int32        `json:"user_id"`
-	RoleID    int32        `json:"role_id"`
-	FirstName string       `json:"first_name"`
-	LastName  string       `json:"last_name"`
-	Email     string       `json:"email"`
-	Password  string       `json:"password"`
-	Active    sql.NullBool `json:"active"`
-	CreatedAt sql.NullTime `json:"created_at"`
-	UpdatedAt sql.NullTime `json:"updated_at"`
+	UserID    int32
+	RoleID    int32
+	FirstName string
+	LastName  string
+	Email     string
+	Password  string
+	IsActive  sql.NullBool
+	CreatedAt sql.NullTime
+	UpdatedAt sql.NullTime
 }
 
 type Waiter struct {
-	WaiterID  int32        `json:"waiter_id"`
-	UserID    int32        `json:"user_id"`
-	CreatedAt sql.NullTime `json:"created_at"`
+	WaiterID  int32
+	UserID    int32
+	CreatedAt sql.NullTime
 }

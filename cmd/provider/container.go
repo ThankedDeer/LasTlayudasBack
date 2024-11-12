@@ -22,7 +22,7 @@ func NewProvider() *Container {
 
 func (c *Container) Build() *api.Server {
 
-	config, err := config.LoadConfig("../../.")
+	config, err := config.LoadConfig("./")
 
 	if err != nil {
 		log.Fatal("cannot load config:", err)

@@ -17,12 +17,12 @@ RETURNING permission_id, name, description, created_at, updated_at
 `
 
 type CreatePermissionParams struct {
-	Name        string         `json:"name"`
-	Description sql.NullString `json:"description"`
+	Name        string
+	Description sql.NullString
 }
 
 func (q *Queries) CreatePermission(ctx context.Context, arg CreatePermissionParams) (Permission, error) {
-	row := q.queryRow(ctx, q.createPermissionStmt, createPermission, arg.Name, arg.Description)
+	row := q.db.QueryRowContext(ctx, createPermission, arg.Name, arg.Description)
 	var i Permission
 	err := row.Scan(
 		&i.PermissionID,
@@ -40,7 +40,7 @@ WHERE permission_id = $1
 `
 
 func (q *Queries) DeletePermission(ctx context.Context, permissionID int32) error {
-	_, err := q.exec(ctx, q.deletePermissionStmt, deletePermission, permissionID)
+	_, err := q.db.ExecContext(ctx, deletePermission, permissionID)
 	return err
 }
 
@@ -51,7 +51,7 @@ ORDER BY name
 `
 
 func (q *Queries) GetAllPermissions(ctx context.Context) ([]Permission, error) {
-	rows, err := q.query(ctx, q.getAllPermissionsStmt, getAllPermissions)
+	rows, err := q.db.QueryContext(ctx, getAllPermissions)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +86,7 @@ WHERE permission_id = $1
 `
 
 func (q *Queries) GetPermissionByID(ctx context.Context, permissionID int32) (Permission, error) {
-	row := q.queryRow(ctx, q.getPermissionByIDStmt, getPermissionByID, permissionID)
+	row := q.db.QueryRowContext(ctx, getPermissionByID, permissionID)
 	var i Permission
 	err := row.Scan(
 		&i.PermissionID,
@@ -105,7 +105,7 @@ WHERE name = $1
 `
 
 func (q *Queries) GetPermissionByName(ctx context.Context, name string) (Permission, error) {
-	row := q.queryRow(ctx, q.getPermissionByNameStmt, getPermissionByName, name)
+	row := q.db.QueryRowContext(ctx, getPermissionByName, name)
 	var i Permission
 	err := row.Scan(
 		&i.PermissionID,
@@ -126,12 +126,12 @@ WHERE permission_id = $1
 `
 
 type UpdatePermissionParams struct {
-	PermissionID int32          `json:"permission_id"`
-	Name         string         `json:"name"`
-	Description  sql.NullString `json:"description"`
+	PermissionID int32
+	Name         string
+	Description  sql.NullString
 }
 
 func (q *Queries) UpdatePermission(ctx context.Context, arg UpdatePermissionParams) error {
-	_, err := q.exec(ctx, q.updatePermissionStmt, updatePermission, arg.PermissionID, arg.Name, arg.Description)
+	_, err := q.db.ExecContext(ctx, updatePermission, arg.PermissionID, arg.Name, arg.Description)
 	return err
 }
