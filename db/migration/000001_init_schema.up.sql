@@ -65,7 +65,7 @@ CREATE TABLE "user" (
   "last_name" varchar(100) NOT NULL,
   "email" varchar(255) UNIQUE NOT NULL,
   "password" varchar(255) NOT NULL,
-  "active" boolean DEFAULT true,
+  "is_active" boolean DEFAULT true,
   "created_at" timestamp DEFAULT current_timestamp,
   "updated_at" timestamp DEFAULT current_timestamp,
   FOREIGN KEY ("role_id") REFERENCES "role" ("role_id")

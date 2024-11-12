@@ -23,13 +23,13 @@ VALUES
 `
 
 type CreateCategoryParams struct {
-	Name        string         `json:"name"`
-	Description sql.NullString `json:"description"`
-	IsActive    sql.NullBool   `json:"is_active"`
+	Name        string
+	Description sql.NullString
+	IsActive    sql.NullBool
 }
 
 func (q *Queries) CreateCategory(ctx context.Context, arg CreateCategoryParams) (Category, error) {
-	row := q.queryRow(ctx, q.createCategoryStmt, createCategory, arg.Name, arg.Description, arg.IsActive)
+	row := q.db.QueryRowContext(ctx, createCategory, arg.Name, arg.Description, arg.IsActive)
 	var i Category
 	err := row.Scan(
 		&i.CategoryID,
@@ -50,7 +50,7 @@ WHERE
 `
 
 func (q *Queries) DeleteCategory(ctx context.Context, categoryID int32) error {
-	_, err := q.exec(ctx, q.deleteCategoryStmt, deleteCategory, categoryID)
+	_, err := q.db.ExecContext(ctx, deleteCategory, categoryID)
 	return err
 }
 
@@ -69,7 +69,7 @@ ORDER BY
 `
 
 func (q *Queries) GetAllCategories(ctx context.Context) ([]Category, error) {
-	rows, err := q.query(ctx, q.getAllCategoriesStmt, getAllCategories)
+	rows, err := q.db.QueryContext(ctx, getAllCategories)
 	if err != nil {
 		return nil, err
 	}
@@ -113,7 +113,7 @@ WHERE
 `
 
 func (q *Queries) GetCategoryByID(ctx context.Context, categoryID int32) (Category, error) {
-	row := q.queryRow(ctx, q.getCategoryByIDStmt, getCategoryByID, categoryID)
+	row := q.db.QueryRowContext(ctx, getCategoryByID, categoryID)
 	var i Category
 	err := row.Scan(
 		&i.CategoryID,
@@ -141,7 +141,7 @@ WHERE
 `
 
 func (q *Queries) GetCategoryByName(ctx context.Context, name string) (Category, error) {
-	row := q.queryRow(ctx, q.getCategoryByNameStmt, getCategoryByName, name)
+	row := q.db.QueryRowContext(ctx, getCategoryByName, name)
 	var i Category
 	err := row.Scan(
 		&i.CategoryID,
@@ -167,14 +167,14 @@ WHERE
 `
 
 type UpdateCategoryParams struct {
-	CategoryID  int32          `json:"category_id"`
-	Name        string         `json:"name"`
-	Description sql.NullString `json:"description"`
-	IsActive    sql.NullBool   `json:"is_active"`
+	CategoryID  int32
+	Name        string
+	Description sql.NullString
+	IsActive    sql.NullBool
 }
 
 func (q *Queries) UpdateCategory(ctx context.Context, arg UpdateCategoryParams) error {
-	_, err := q.exec(ctx, q.updateCategoryStmt, updateCategory,
+	_, err := q.db.ExecContext(ctx, updateCategory,
 		arg.CategoryID,
 		arg.Name,
 		arg.Description,

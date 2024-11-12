@@ -16,12 +16,12 @@ RETURNING order_id, order_date, table_id, status_id
 `
 
 type CreateOrderParams struct {
-	TableID  int32 `json:"table_id"`
-	StatusID int32 `json:"status_id"`
+	TableID  int32
+	StatusID int32
 }
 
 func (q *Queries) CreateOrder(ctx context.Context, arg CreateOrderParams) (Order, error) {
-	row := q.queryRow(ctx, q.createOrderStmt, createOrder, arg.TableID, arg.StatusID)
+	row := q.db.QueryRowContext(ctx, createOrder, arg.TableID, arg.StatusID)
 	var i Order
 	err := row.Scan(
 		&i.OrderID,
@@ -38,7 +38,7 @@ WHERE order_id = $1
 `
 
 func (q *Queries) DeleteOrder(ctx context.Context, orderID int32) error {
-	_, err := q.exec(ctx, q.deleteOrderStmt, deleteOrder, orderID)
+	_, err := q.db.ExecContext(ctx, deleteOrder, orderID)
 	return err
 }
 
@@ -49,7 +49,7 @@ ORDER BY order_date DESC
 `
 
 func (q *Queries) GetAllOrders(ctx context.Context) ([]Order, error) {
-	rows, err := q.query(ctx, q.getAllOrdersStmt, getAllOrders)
+	rows, err := q.db.QueryContext(ctx, getAllOrders)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +83,7 @@ WHERE order_id = $1
 `
 
 func (q *Queries) GetOrderByID(ctx context.Context, orderID int32) (Order, error) {
-	row := q.queryRow(ctx, q.getOrderByIDStmt, getOrderByID, orderID)
+	row := q.db.QueryRowContext(ctx, getOrderByID, orderID)
 	var i Order
 	err := row.Scan(
 		&i.OrderID,
@@ -102,12 +102,12 @@ WHERE order_id = $1
 `
 
 type UpdateOrderParams struct {
-	OrderID  int32 `json:"order_id"`
-	TableID  int32 `json:"table_id"`
-	StatusID int32 `json:"status_id"`
+	OrderID  int32
+	TableID  int32
+	StatusID int32
 }
 
 func (q *Queries) UpdateOrder(ctx context.Context, arg UpdateOrderParams) error {
-	_, err := q.exec(ctx, q.updateOrderStmt, updateOrder, arg.OrderID, arg.TableID, arg.StatusID)
+	_, err := q.db.ExecContext(ctx, updateOrder, arg.OrderID, arg.TableID, arg.StatusID)
 	return err
 }
