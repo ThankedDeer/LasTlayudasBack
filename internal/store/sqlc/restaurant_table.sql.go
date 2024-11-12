@@ -16,13 +16,13 @@ RETURNING table_id, number, waiter_id, status_id, created_at, updated_at
 `
 
 type CreateRestaurantTableParams struct {
-	Number   int32 `json:"number"`
-	WaiterID int32 `json:"waiter_id"`
-	StatusID int32 `json:"status_id"`
+	Number   int32
+	WaiterID int32
+	StatusID int32
 }
 
 func (q *Queries) CreateRestaurantTable(ctx context.Context, arg CreateRestaurantTableParams) (RestaurantTable, error) {
-	row := q.queryRow(ctx, q.createRestaurantTableStmt, createRestaurantTable, arg.Number, arg.WaiterID, arg.StatusID)
+	row := q.db.QueryRowContext(ctx, createRestaurantTable, arg.Number, arg.WaiterID, arg.StatusID)
 	var i RestaurantTable
 	err := row.Scan(
 		&i.TableID,
@@ -41,7 +41,7 @@ WHERE table_id = $1
 `
 
 func (q *Queries) DeleteRestaurantTable(ctx context.Context, tableID int32) error {
-	_, err := q.exec(ctx, q.deleteRestaurantTableStmt, deleteRestaurantTable, tableID)
+	_, err := q.db.ExecContext(ctx, deleteRestaurantTable, tableID)
 	return err
 }
 
@@ -52,7 +52,7 @@ ORDER BY number
 `
 
 func (q *Queries) GetAllRestaurantTables(ctx context.Context) ([]RestaurantTable, error) {
-	rows, err := q.query(ctx, q.getAllRestaurantTablesStmt, getAllRestaurantTables)
+	rows, err := q.db.QueryContext(ctx, getAllRestaurantTables)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,7 @@ WHERE table_id = $1
 `
 
 func (q *Queries) GetRestaurantTableByID(ctx context.Context, tableID int32) (RestaurantTable, error) {
-	row := q.queryRow(ctx, q.getRestaurantTableByIDStmt, getRestaurantTableByID, tableID)
+	row := q.db.QueryRowContext(ctx, getRestaurantTableByID, tableID)
 	var i RestaurantTable
 	err := row.Scan(
 		&i.TableID,
@@ -111,14 +111,14 @@ WHERE table_id = $1
 `
 
 type UpdateRestaurantTableParams struct {
-	TableID  int32 `json:"table_id"`
-	Number   int32 `json:"number"`
-	WaiterID int32 `json:"waiter_id"`
-	StatusID int32 `json:"status_id"`
+	TableID  int32
+	Number   int32
+	WaiterID int32
+	StatusID int32
 }
 
 func (q *Queries) UpdateRestaurantTable(ctx context.Context, arg UpdateRestaurantTableParams) error {
-	_, err := q.exec(ctx, q.updateRestaurantTableStmt, updateRestaurantTable,
+	_, err := q.db.ExecContext(ctx, updateRestaurantTable,
 		arg.TableID,
 		arg.Number,
 		arg.WaiterID,

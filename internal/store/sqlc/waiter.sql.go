@@ -16,7 +16,7 @@ RETURNING waiter_id, user_id, created_at
 `
 
 func (q *Queries) CreateWaiter(ctx context.Context, userID int32) (Waiter, error) {
-	row := q.queryRow(ctx, q.createWaiterStmt, createWaiter, userID)
+	row := q.db.QueryRowContext(ctx, createWaiter, userID)
 	var i Waiter
 	err := row.Scan(&i.WaiterID, &i.UserID, &i.CreatedAt)
 	return i, err
@@ -28,7 +28,7 @@ WHERE waiter_id = $1
 `
 
 func (q *Queries) DeleteWaiter(ctx context.Context, waiterID int32) error {
-	_, err := q.exec(ctx, q.deleteWaiterStmt, deleteWaiter, waiterID)
+	_, err := q.db.ExecContext(ctx, deleteWaiter, waiterID)
 	return err
 }
 
@@ -38,7 +38,7 @@ FROM "waiter"
 `
 
 func (q *Queries) GetAllWaiters(ctx context.Context) ([]Waiter, error) {
-	rows, err := q.query(ctx, q.getAllWaitersStmt, getAllWaiters)
+	rows, err := q.db.QueryContext(ctx, getAllWaiters)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ WHERE waiter_id = $1
 `
 
 func (q *Queries) GetWaiterByID(ctx context.Context, waiterID int32) (Waiter, error) {
-	row := q.queryRow(ctx, q.getWaiterByIDStmt, getWaiterByID, waiterID)
+	row := q.db.QueryRowContext(ctx, getWaiterByID, waiterID)
 	var i Waiter
 	err := row.Scan(&i.WaiterID, &i.UserID, &i.CreatedAt)
 	return i, err
@@ -80,7 +80,7 @@ WHERE user_id = $1
 `
 
 func (q *Queries) GetWaiterByUserID(ctx context.Context, userID int32) (Waiter, error) {
-	row := q.queryRow(ctx, q.getWaiterByUserIDStmt, getWaiterByUserID, userID)
+	row := q.db.QueryRowContext(ctx, getWaiterByUserID, userID)
 	var i Waiter
 	err := row.Scan(&i.WaiterID, &i.UserID, &i.CreatedAt)
 	return i, err

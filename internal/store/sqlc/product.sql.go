@@ -18,22 +18,22 @@ RETURNING "product_id", "created_at", "updated_at"
 `
 
 type CreateProductParams struct {
-	Name          string `json:"name"`
-	PurchasePrice string `json:"purchase_price"`
-	SalePrice     string `json:"sale_price"`
-	Stock         int32  `json:"stock"`
-	CategoryID    int32  `json:"category_id"`
-	ProviderID    int32  `json:"provider_id"`
+	Name          string
+	PurchasePrice string
+	SalePrice     string
+	Stock         int32
+	CategoryID    int32
+	ProviderID    int32
 }
 
 type CreateProductRow struct {
-	ProductID int32        `json:"product_id"`
-	CreatedAt sql.NullTime `json:"created_at"`
-	UpdatedAt sql.NullTime `json:"updated_at"`
+	ProductID int32
+	CreatedAt sql.NullTime
+	UpdatedAt sql.NullTime
 }
 
 func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (CreateProductRow, error) {
-	row := q.queryRow(ctx, q.createProductStmt, createProduct,
+	row := q.db.QueryRowContext(ctx, createProduct,
 		arg.Name,
 		arg.PurchasePrice,
 		arg.SalePrice,
@@ -52,7 +52,7 @@ WHERE "product_id" = $1
 `
 
 func (q *Queries) DeleteProduct(ctx context.Context, productID int32) error {
-	_, err := q.exec(ctx, q.deleteProductStmt, deleteProduct, productID)
+	_, err := q.db.ExecContext(ctx, deleteProduct, productID)
 	return err
 }
 
@@ -62,7 +62,7 @@ FROM "product"
 `
 
 func (q *Queries) GetAllProducts(ctx context.Context) ([]Product, error) {
-	rows, err := q.query(ctx, q.getAllProductsStmt, getAllProducts)
+	rows, err := q.db.QueryContext(ctx, getAllProducts)
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +101,7 @@ WHERE "product_id" = $1
 `
 
 func (q *Queries) GetProductByID(ctx context.Context, productID int32) (Product, error) {
-	row := q.queryRow(ctx, q.getProductByIDStmt, getProductByID, productID)
+	row := q.db.QueryRowContext(ctx, getProductByID, productID)
 	var i Product
 	err := row.Scan(
 		&i.ProductID,
@@ -131,17 +131,17 @@ RETURNING "updated_at"
 `
 
 type UpdateProductParams struct {
-	Name          string `json:"name"`
-	PurchasePrice string `json:"purchase_price"`
-	SalePrice     string `json:"sale_price"`
-	Stock         int32  `json:"stock"`
-	CategoryID    int32  `json:"category_id"`
-	ProviderID    int32  `json:"provider_id"`
-	ProductID     int32  `json:"product_id"`
+	Name          string
+	PurchasePrice string
+	SalePrice     string
+	Stock         int32
+	CategoryID    int32
+	ProviderID    int32
+	ProductID     int32
 }
 
 func (q *Queries) UpdateProduct(ctx context.Context, arg UpdateProductParams) (sql.NullTime, error) {
-	row := q.queryRow(ctx, q.updateProductStmt, updateProduct,
+	row := q.db.QueryRowContext(ctx, updateProduct,
 		arg.Name,
 		arg.PurchasePrice,
 		arg.SalePrice,

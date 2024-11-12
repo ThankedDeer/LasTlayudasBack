@@ -17,12 +17,12 @@ RETURNING table_status_id, name, description, created_at
 `
 
 type CreateTableStatusParams struct {
-	Name        string         `json:"name"`
-	Description sql.NullString `json:"description"`
+	Name        string
+	Description sql.NullString
 }
 
 func (q *Queries) CreateTableStatus(ctx context.Context, arg CreateTableStatusParams) (TableStatus, error) {
-	row := q.queryRow(ctx, q.createTableStatusStmt, createTableStatus, arg.Name, arg.Description)
+	row := q.db.QueryRowContext(ctx, createTableStatus, arg.Name, arg.Description)
 	var i TableStatus
 	err := row.Scan(
 		&i.TableStatusID,
@@ -39,7 +39,7 @@ WHERE table_status_id = $1
 `
 
 func (q *Queries) DeleteTableStatus(ctx context.Context, tableStatusID int32) error {
-	_, err := q.exec(ctx, q.deleteTableStatusStmt, deleteTableStatus, tableStatusID)
+	_, err := q.db.ExecContext(ctx, deleteTableStatus, tableStatusID)
 	return err
 }
 
@@ -50,7 +50,7 @@ ORDER BY name
 `
 
 func (q *Queries) GetAllTableStatuses(ctx context.Context) ([]TableStatus, error) {
-	rows, err := q.query(ctx, q.getAllTableStatusesStmt, getAllTableStatuses)
+	rows, err := q.db.QueryContext(ctx, getAllTableStatuses)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +84,7 @@ WHERE table_status_id = $1
 `
 
 func (q *Queries) GetTableStatusByID(ctx context.Context, tableStatusID int32) (TableStatus, error) {
-	row := q.queryRow(ctx, q.getTableStatusByIDStmt, getTableStatusByID, tableStatusID)
+	row := q.db.QueryRowContext(ctx, getTableStatusByID, tableStatusID)
 	var i TableStatus
 	err := row.Scan(
 		&i.TableStatusID,
@@ -103,12 +103,12 @@ WHERE table_status_id = $1
 `
 
 type UpdateTableStatusParams struct {
-	TableStatusID int32          `json:"table_status_id"`
-	Name          string         `json:"name"`
-	Description   sql.NullString `json:"description"`
+	TableStatusID int32
+	Name          string
+	Description   sql.NullString
 }
 
 func (q *Queries) UpdateTableStatus(ctx context.Context, arg UpdateTableStatusParams) error {
-	_, err := q.exec(ctx, q.updateTableStatusStmt, updateTableStatus, arg.TableStatusID, arg.Name, arg.Description)
+	_, err := q.db.ExecContext(ctx, updateTableStatus, arg.TableStatusID, arg.Name, arg.Description)
 	return err
 }

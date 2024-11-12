@@ -17,12 +17,12 @@ RETURNING role_id, name, description, created_at, updated_at
 `
 
 type CreateRoleParams struct {
-	Name        string         `json:"name"`
-	Description sql.NullString `json:"description"`
+	Name        string
+	Description sql.NullString
 }
 
 func (q *Queries) CreateRole(ctx context.Context, arg CreateRoleParams) (Role, error) {
-	row := q.queryRow(ctx, q.createRoleStmt, createRole, arg.Name, arg.Description)
+	row := q.db.QueryRowContext(ctx, createRole, arg.Name, arg.Description)
 	var i Role
 	err := row.Scan(
 		&i.RoleID,
@@ -40,7 +40,7 @@ WHERE role_id = $1
 `
 
 func (q *Queries) DeleteRole(ctx context.Context, roleID int32) error {
-	_, err := q.exec(ctx, q.deleteRoleStmt, deleteRole, roleID)
+	_, err := q.db.ExecContext(ctx, deleteRole, roleID)
 	return err
 }
 
@@ -51,7 +51,7 @@ ORDER BY name
 `
 
 func (q *Queries) GetAllRoles(ctx context.Context) ([]Role, error) {
-	rows, err := q.query(ctx, q.getAllRolesStmt, getAllRoles)
+	rows, err := q.db.QueryContext(ctx, getAllRoles)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +86,7 @@ WHERE role_id = $1
 `
 
 func (q *Queries) GetRoleByID(ctx context.Context, roleID int32) (Role, error) {
-	row := q.queryRow(ctx, q.getRoleByIDStmt, getRoleByID, roleID)
+	row := q.db.QueryRowContext(ctx, getRoleByID, roleID)
 	var i Role
 	err := row.Scan(
 		&i.RoleID,
@@ -105,7 +105,7 @@ WHERE name = $1
 `
 
 func (q *Queries) GetRoleByName(ctx context.Context, name string) (Role, error) {
-	row := q.queryRow(ctx, q.getRoleByNameStmt, getRoleByName, name)
+	row := q.db.QueryRowContext(ctx, getRoleByName, name)
 	var i Role
 	err := row.Scan(
 		&i.RoleID,
@@ -126,12 +126,12 @@ WHERE role_id = $1
 `
 
 type UpdateRoleParams struct {
-	RoleID      int32          `json:"role_id"`
-	Name        string         `json:"name"`
-	Description sql.NullString `json:"description"`
+	RoleID      int32
+	Name        string
+	Description sql.NullString
 }
 
 func (q *Queries) UpdateRole(ctx context.Context, arg UpdateRoleParams) error {
-	_, err := q.exec(ctx, q.updateRoleStmt, updateRole, arg.RoleID, arg.Name, arg.Description)
+	_, err := q.db.ExecContext(ctx, updateRole, arg.RoleID, arg.Name, arg.Description)
 	return err
 }
