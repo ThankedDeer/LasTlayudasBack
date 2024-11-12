@@ -14,10 +14,11 @@ type Server struct {
 	cfg    config.Config
 	engine *echo.Echo
 	//userRouter router.IUserRouter
-	ProductRouter  router.IProductRouter
-	CategoryRouter router.ICategoryRouter
-	ProviderRouter router.IProviderRouter
-	RoleRouter     router.IRoleRouter
+	ProductRouter     router.IProductRouter
+	CategoryRouter    router.ICategoryRouter
+	ProviderRouter    router.IProviderRouter
+	RoleRouter        router.IRoleRouter
+	OrderStatusRouter router.IOrderStatusRouter
 }
 
 func NewServer(
@@ -27,15 +28,17 @@ func NewServer(
 	CategoryRouter router.ICategoryRouter,
 	ProviderRouter router.IProviderRouter,
 	RoleRouter router.IRoleRouter,
+	OrderStatusRouter router.IOrderStatusRouter,
 	//userRouter router.IUserRouter,
 ) *Server {
 	return &Server{
-		cfg:            cfg,
-		engine:         engine,
-		ProductRouter:  ProductRouter,
-		CategoryRouter: CategoryRouter,
-		ProviderRouter: ProviderRouter,
-		RoleRouter:     RoleRouter,
+		cfg:               cfg,
+		engine:            engine,
+		ProductRouter:     ProductRouter,
+		CategoryRouter:    CategoryRouter,
+		ProviderRouter:    ProviderRouter,
+		RoleRouter:        RoleRouter,
+		OrderStatusRouter: OrderStatusRouter,
 		//userRouter: userRouter,
 	}
 
@@ -50,6 +53,7 @@ func (s *Server) BuildServer() {
 	s.ProductRouter.ProductResource(basePath)
 	s.CategoryRouter.CategoryResource(basePath)
 	s.ProviderRouter.ProviderResource(basePath)
+	s.OrderStatusRouter.OrderStatusResource(basePath)
 	//s.userRouter.UserResource(basePath)
 	fmt.Println(basePath)
 

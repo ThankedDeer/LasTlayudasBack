@@ -22,7 +22,7 @@ func NewProvider() *Container {
 
 func (c *Container) Build() *api.Server {
 
-	config, err := config.LoadConfig("../../.")
+	config, err := config.LoadConfig("./")
 
 	if err != nil {
 		log.Fatal("cannot load config:", err)
@@ -53,6 +53,10 @@ func (c *Container) Build() *api.Server {
 	RoleHandler := handler.NewRoleHandler(RoleService)
 	RoleRouter := router.NewRoleRouter(RoleHandler)
 
+	OrderStatusService := app.NewOrderStatusApp(store)
+	OrderStatusHandler := handler.NewOrderStatusHandler(OrderStatusService)
+	OrderStatusRouter := router.NewOrdeStatusRouter(OrderStatusHandler)
+
 	server := api.NewServer(
 		config,
 		engine,
@@ -60,6 +64,7 @@ func (c *Container) Build() *api.Server {
 		CategoryRouter,
 		ProviderRouter,
 		RoleRouter,
+		OrderStatusRouter,
 	)
 	server.BuildServer()
 	return server
