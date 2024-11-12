@@ -71,13 +71,6 @@ CREATE TABLE "user" (
   FOREIGN KEY ("role_id") REFERENCES "role" ("role_id")
 );
 
-CREATE TABLE "waiter" (
-  "waiter_id" serial PRIMARY KEY,
-  "user_id" integer UNIQUE NOT NULL,
-  "created_at" timestamp DEFAULT current_timestamp,
-  FOREIGN KEY ("user_id") REFERENCES "user" ("user_id")
-);
-
 CREATE TABLE "table_status" (
   "table_status_id" serial PRIMARY KEY,
   "name" varchar(100) NOT NULL,
@@ -92,7 +85,7 @@ CREATE TABLE "restaurant_table" (
   "status_id" integer NOT NULL,
   "created_at" timestamp DEFAULT current_timestamp,
   "updated_at" timestamp DEFAULT current_timestamp,
-  FOREIGN KEY ("waiter_id") REFERENCES "waiter" ("waiter_id"),
+
   FOREIGN KEY ("status_id") REFERENCES "table_status" ("table_status_id")
 );
 
