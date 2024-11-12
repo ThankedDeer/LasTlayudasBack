@@ -17,12 +17,12 @@ RETURNING order_status_id, name, description, created_at
 `
 
 type CreateOrderStatusParams struct {
-	Name        string         `json:"name"`
-	Description sql.NullString `json:"description"`
+	Name        string
+	Description sql.NullString
 }
 
 func (q *Queries) CreateOrderStatus(ctx context.Context, arg CreateOrderStatusParams) (OrderStatus, error) {
-	row := q.queryRow(ctx, q.createOrderStatusStmt, createOrderStatus, arg.Name, arg.Description)
+	row := q.db.QueryRowContext(ctx, createOrderStatus, arg.Name, arg.Description)
 	var i OrderStatus
 	err := row.Scan(
 		&i.OrderStatusID,
@@ -39,7 +39,7 @@ WHERE order_status_id = $1
 `
 
 func (q *Queries) DeleteOrderStatus(ctx context.Context, orderStatusID int32) error {
-	_, err := q.exec(ctx, q.deleteOrderStatusStmt, deleteOrderStatus, orderStatusID)
+	_, err := q.db.ExecContext(ctx, deleteOrderStatus, orderStatusID)
 	return err
 }
 
@@ -50,7 +50,7 @@ ORDER BY name
 `
 
 func (q *Queries) GetAllOrderStatuses(ctx context.Context) ([]OrderStatus, error) {
-	rows, err := q.query(ctx, q.getAllOrderStatusesStmt, getAllOrderStatuses)
+	rows, err := q.db.QueryContext(ctx, getAllOrderStatuses)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +84,7 @@ WHERE order_status_id = $1
 `
 
 func (q *Queries) GetOrderStatusByID(ctx context.Context, orderStatusID int32) (OrderStatus, error) {
-	row := q.queryRow(ctx, q.getOrderStatusByIDStmt, getOrderStatusByID, orderStatusID)
+	row := q.db.QueryRowContext(ctx, getOrderStatusByID, orderStatusID)
 	var i OrderStatus
 	err := row.Scan(
 		&i.OrderStatusID,
@@ -103,12 +103,12 @@ WHERE order_status_id = $1
 `
 
 type UpdateOrderStatusParams struct {
-	OrderStatusID int32          `json:"order_status_id"`
-	Name          string         `json:"name"`
-	Description   sql.NullString `json:"description"`
+	OrderStatusID int32
+	Name          string
+	Description   sql.NullString
 }
 
 func (q *Queries) UpdateOrderStatus(ctx context.Context, arg UpdateOrderStatusParams) error {
-	_, err := q.exec(ctx, q.updateOrderStatusStmt, updateOrderStatus, arg.OrderStatusID, arg.Name, arg.Description)
+	_, err := q.db.ExecContext(ctx, updateOrderStatus, arg.OrderStatusID, arg.Name, arg.Description)
 	return err
 }

@@ -16,14 +16,14 @@ RETURNING provider_id, name, phone, email, address, created_at, updated_at
 `
 
 type CreateProviderParams struct {
-	Name    string `json:"name"`
-	Phone   string `json:"phone"`
-	Email   string `json:"email"`
-	Address string `json:"address"`
+	Name    string
+	Phone   string
+	Email   string
+	Address string
 }
 
 func (q *Queries) CreateProvider(ctx context.Context, arg CreateProviderParams) (Provider, error) {
-	row := q.queryRow(ctx, q.createProviderStmt, createProvider,
+	row := q.db.QueryRowContext(ctx, createProvider,
 		arg.Name,
 		arg.Phone,
 		arg.Email,
@@ -48,7 +48,7 @@ WHERE provider_id = $1
 `
 
 func (q *Queries) DeleteProvider(ctx context.Context, providerID int32) error {
-	_, err := q.exec(ctx, q.deleteProviderStmt, deleteProvider, providerID)
+	_, err := q.db.ExecContext(ctx, deleteProvider, providerID)
 	return err
 }
 
@@ -59,7 +59,7 @@ ORDER BY name
 `
 
 func (q *Queries) GetAllProviders(ctx context.Context) ([]Provider, error) {
-	rows, err := q.query(ctx, q.getAllProvidersStmt, getAllProviders)
+	rows, err := q.db.QueryContext(ctx, getAllProviders)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +96,7 @@ WHERE email = $1
 `
 
 func (q *Queries) GetProviderByEmail(ctx context.Context, email string) (Provider, error) {
-	row := q.queryRow(ctx, q.getProviderByEmailStmt, getProviderByEmail, email)
+	row := q.db.QueryRowContext(ctx, getProviderByEmail, email)
 	var i Provider
 	err := row.Scan(
 		&i.ProviderID,
@@ -117,7 +117,7 @@ WHERE provider_id = $1
 `
 
 func (q *Queries) GetProviderByID(ctx context.Context, providerID int32) (Provider, error) {
-	row := q.queryRow(ctx, q.getProviderByIDStmt, getProviderByID, providerID)
+	row := q.db.QueryRowContext(ctx, getProviderByID, providerID)
 	var i Provider
 	err := row.Scan(
 		&i.ProviderID,
@@ -142,15 +142,15 @@ WHERE provider_id = $1
 `
 
 type UpdateProviderParams struct {
-	ProviderID int32  `json:"provider_id"`
-	Name       string `json:"name"`
-	Phone      string `json:"phone"`
-	Email      string `json:"email"`
-	Address    string `json:"address"`
+	ProviderID int32
+	Name       string
+	Phone      string
+	Email      string
+	Address    string
 }
 
 func (q *Queries) UpdateProvider(ctx context.Context, arg UpdateProviderParams) error {
-	_, err := q.exec(ctx, q.updateProviderStmt, updateProvider,
+	_, err := q.db.ExecContext(ctx, updateProvider,
 		arg.ProviderID,
 		arg.Name,
 		arg.Phone,

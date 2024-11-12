@@ -17,6 +17,7 @@ type Server struct {
 	ProductRouter  router.IProductRouter
 	CategoryRouter router.ICategoryRouter
 	ProviderRouter router.IProviderRouter
+	RoleRouter     router.IRoleRouter
 }
 
 func NewServer(
@@ -25,6 +26,7 @@ func NewServer(
 	ProductRouter router.IProductRouter,
 	CategoryRouter router.ICategoryRouter,
 	ProviderRouter router.IProviderRouter,
+	RoleRouter router.IRoleRouter,
 	//userRouter router.IUserRouter,
 ) *Server {
 	return &Server{
@@ -33,6 +35,7 @@ func NewServer(
 		ProductRouter:  ProductRouter,
 		CategoryRouter: CategoryRouter,
 		ProviderRouter: ProviderRouter,
+		RoleRouter:     RoleRouter,
 		//userRouter: userRouter,
 	}
 

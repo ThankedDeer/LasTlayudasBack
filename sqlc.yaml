@@ -1,12 +1,10 @@
-version: "1"
-packages:
-  - name: "sqlc"
-    path: "./internal/store/sqlc"
+version: "2"
+sql:
+  - engine: "postgresql"
     queries: "./internal/domain/query"
     schema: "./db/migration/"
-    engine: "postgresql"
-    emit_json_tags: true
-    emit_prepared_queries: true
-    emit_interface: false
-    emit_exact_table_names: true
+    gen:
+      go:
+        package: "sqlc"
+        out: "./internal/store/sqlc"
   
