@@ -2,28 +2,30 @@ package util
 
 import (
 	"math/rand"
+	"strings"
 	"time"
 )
 
-// RandomString genera una cadena aleatoria de longitud n.
-func RandomString(n int) string {
-	const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+const alphabet = "abcdefghijklmnopqrstuvwxyz"
+
+func init() {
 	rand.Seed(time.Now().UnixNano())
-	result := make([]byte, n)
-	for i := range result {
-		result[i] = letters[rand.Intn(len(letters))]
-	}
-	return string(result)
 }
 
-// RandomOwner genera un correo electrónico aleatorio.
+// RandomString generates a random string of length n
+func RandomString(n int) string {
+	var sb strings.Builder
+	k := len(alphabet)
+
+	for i := 0; i < n; i++ {
+		c := alphabet[rand.Intn(k)]
+		sb.WriteByte(c)
+	}
+
+	return sb.String()
+}
+
+// RandomOwner generates a random owner name
 func RandomOwner() string {
-	domains := []string{"example.com", "test.com", "email.com"}
-	names := []string{"user", "admin", "test"}
-	rand.Seed(time.Now().UnixNano())
-
-	name := names[rand.Intn(len(names))]
-	domain := domains[rand.Intn(len(domains))]
-
-	return name + "@" + domain
+	return RandomString(6)
 }
