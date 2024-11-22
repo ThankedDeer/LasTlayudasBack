@@ -3,14 +3,15 @@ package handler
 import (
 	"database/sql"
 	"encoding/json"
-	"github/thankeddeer/lastlayudas/internal/app"
-	"github/thankeddeer/lastlayudas/internal/domain/dto"
-	"github/thankeddeer/lastlayudas/internal/store/sqlc"
 	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
+
+	"github/thankeddeer/lastlayudas/internal/app"
+	"github/thankeddeer/lastlayudas/internal/domain/dto"
+	"github/thankeddeer/lastlayudas/internal/store/sqlc"
 )
 
 type ICategoryHandler interface {

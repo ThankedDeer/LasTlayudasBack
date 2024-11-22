@@ -2,12 +2,13 @@ package api
 
 import (
 	"fmt"
-	"github/thankeddeer/lastlayudas/config"
-	"github/thankeddeer/lastlayudas/internal/infra/api/router"
 	"log"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+
+	"github/thankeddeer/lastlayudas/config"
+	"github/thankeddeer/lastlayudas/internal/infra/api/router"
 )
 
 type Server struct {
@@ -18,6 +19,7 @@ type Server struct {
 	CategoryRouter router.ICategoryRouter
 	ProviderRouter router.IProviderRouter
 	RoleRouter     router.IRoleRouter
+	UserRouter     router.IUserRouter
 }
 
 func NewServer(
@@ -27,6 +29,7 @@ func NewServer(
 	CategoryRouter router.ICategoryRouter,
 	ProviderRouter router.IProviderRouter,
 	RoleRouter router.IRoleRouter,
+	UserRouter router.IUserRouter,
 	//userRouter router.IUserRouter,
 ) *Server {
 	return &Server{
@@ -36,6 +39,7 @@ func NewServer(
 		CategoryRouter: CategoryRouter,
 		ProviderRouter: ProviderRouter,
 		RoleRouter:     RoleRouter,
+		UserRouter:     UserRouter,
 		//userRouter: userRouter,
 	}
 
@@ -50,6 +54,8 @@ func (s *Server) BuildServer() {
 	s.ProductRouter.ProductResource(basePath)
 	s.CategoryRouter.CategoryResource(basePath)
 	s.ProviderRouter.ProviderResource(basePath)
+	s.UserRouter.UserResource(basePath)
+	s.RoleRouter.RoleResource(basePath)
 	//s.userRouter.UserResource(basePath)
 	fmt.Println(basePath)
 

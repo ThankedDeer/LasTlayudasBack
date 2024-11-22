@@ -1,111 +1,124 @@
 package app
 
-// import (
-// 	"context"
-// 	"errors"
-// 	"fmt"
-// 	"github/thankeddeer/lastlayudas/internal/domain/dto"
-// 	"github/thankeddeer/lastlayudas/internal/store/sqlc"
-//
+import (
+	"context"
+	"database/sql"
+	"errors"
 
-// 	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/crypto/bcrypt"
 
-// )
+	"github/thankeddeer/lastlayudas/internal/domain/dto"
+	"github/thankeddeer/lastlayudas/internal/store/sqlc"
+)
 
-// type UserApp struct {
-// 	store *sqlc.Store
-// }
+var ErrUserNotFound = errors.New("usuario no encontrado")
 
-// func NewUserApp(store *sqlc.Store) UserApp {
-// 	return UserApp{
-// 		store: store,
-// 	}
-// }
+type UserApp struct {
+	store *sqlc.Store
+}
 
-// func (u *UserApp) CreateUser(data dto.CreateUserRequest) (*sqlc.Users, error) {
+func NewUserApp(store *sqlc.Store) UserApp {
+	return UserApp{
+		store: store,
+	}
+}
 
-// 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+// CreateUser crea un usuario con contraseña hasheada y retorna el usuario creado.
+func (u *UserApp) CreateUser(data dto.CreateUserRequest) (*sqlc.CreateUserRow, error) {
+	// Generar el hash de la contraseña
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
 
-// 	data.Password = string(hashedPassword)
+	// Crear el usuario en la base de datos
+	user, err := u.store.CreateUser(context.Background(), sqlc.CreateUserParams{
+		RoleID:    data.RoleID,
+		FirstName: data.FirstName,
+		LastName:  data.LastName,
+		Email:     data.Email,
+		Password:  string(hashedPassword),
+		IsActive:  data.IsActive,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-// 	user, err := u.store.CreateUser(context.Background(), sqlc.CreateUserParams(data))
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	return &user, nil
+}
 
-// 	userRole, err := u.store.CreateUserRole(context.Background(), sqlc.CreateUserRoleParams{
-// 		UserID: user.UserID,
-// 		RoleID: 1,
-// 	})
+// GetAllUsers obtiene todos los usuarios ordenados por apellido y nombre.
+func (u *UserApp) GetAllUsers() ([]sqlc.GetAllUsersRow, error) {
+	users, err := u.store.GetAllUsers(context.Background())
+	if err != nil {
+		return nil, err
+	}
 
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	if len(users) == 0 {
+		return nil, errors.New("no se encontraron usuarios")
+	}
 
-// 	fmt.Println(userRole)
+	return users, nil
+}
 
-// 	return &user, nil
-// }
+// GetUserByID obtiene un usuario por su ID.
+func (u *UserApp) GetUserByID(userID int32) (*sqlc.GetUserByIDRow, error) {
+	user, err := u.store.GetUserByID(context.Background(), userID)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
 
-// func (u *UserApp) GetUsers() ([]sqlc.GetUsersWithRolesRow, error) {
+// GetUserByEmail obtiene un usuario por su correo electrónico.
+func (u *UserApp) GetUserByEmail(email string) (*sqlc.GetUserByEmailRow, error) {
+	user, err := u.store.GetUserByEmail(context.Background(), email)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
 
-// 	users, err := u.store.GetUsersWithRoles(context.Background())
-// 	if err != nil {
-// 		return nil, err
-// 	}
+// UpdateUser actualiza la información de un usuario, incluyendo el hash de la nueva contraseña si se proporciona.
+func (u *UserApp) UpdateUser(data dto.UpdateUserRequest) error {
+	// Hashear la contraseña si se proporciona una nueva.
+	var hashedPassword string
+	if data.Password != "" {
+		hash, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return err
+		}
+		hashedPassword = string(hash)
+	} else {
+		// Si la contraseña no cambia, la dejamos vacía y la manejaremos como opcional en la consulta SQL.
+		hashedPassword = data.Password
+	}
 
-// 	if len(users) == 0 {
-// 		return nil, errors.New("no se encontraron usuarios")
-// 	}
+	// Construir los parámetros para la actualización
+	params := sqlc.UpdateUserParams{
+		UserID:    data.UserID,
+		RoleID:    data.RoleID,
+		FirstName: data.FirstName,
+		LastName:  data.LastName,
+		Email:     data.Email,
+		Password:  hashedPassword, // Puede ser vacío si no se actualiza
+		IsActive:  sql.NullBool{Bool: data.IsActive, Valid: true},
+	}
 
-// 	return users, nil
-// }
+	// Actualizar el usuario en la base de datos
+	err := u.store.UpdateUser(context.Background(), params)
+	if err != nil {
+		return err
+	}
 
-// func (u *UserApp) UpdateUser(data sqlc.UpdatUserParams) error {
+	return nil
+}
 
-// 	arg := sqlc.UpdatUserParams{
-// 		UserID:    data.UserID,
-// 		Firstname: data.Firstname,
-// 		Lastname:  data.Lastname,
-// 		Password:  data.Password,
-// 		Email:     data.Email,
-// 	}
-
-// 	err := u.store.UpdatUser(context.Background(), arg)
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	return nil
-// }
-
-// func (u *UserApp) CreateTestimonial(data dto.CreateTestimonial) (*sqlc.Testimonials, error) {
-
-// 	arg := sqlc.CreateTestimonialParams{
-// 		Title:       data.Title,
-// 		Testimonial: data.Testimonial,
-// 		UserID:      5,
-// 	}
-// 	testimonial, err := u.store.CreateTestimonial(context.Background(), arg)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return &testimonial, nil
-// }
-
-// func (u *UserApp) GetTestimonial() ([]sqlc.Testimonials, error) {
-
-// 	testimonial, err := u.store.GetTestimonials(context.Background())
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	if len(testimonial) == 0 {
-// 		return nil, errors.New("no existen testimonios")
-// 	}
-
-// 	return testimonial, nil
-// }
+// DeleteUser elimina un usuario por su ID.
+func (u *UserApp) DeleteUser(userID int32) error {
+	err := u.store.DeleteUser(context.Background(), userID)
+	if err != nil {
+		return err
+	}
+	return nil
+}

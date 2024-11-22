@@ -3,15 +3,16 @@ package provider
 import (
 	"database/sql"
 	"fmt"
+	"log"
+
+	"github.com/labstack/echo/v4"
+
 	"github/thankeddeer/lastlayudas/config"
 	"github/thankeddeer/lastlayudas/internal/app"
 	"github/thankeddeer/lastlayudas/internal/infra/api"
 	"github/thankeddeer/lastlayudas/internal/infra/api/handler"
 	"github/thankeddeer/lastlayudas/internal/infra/api/router"
 	"github/thankeddeer/lastlayudas/internal/store/sqlc"
-	"log"
-
-	"github.com/labstack/echo/v4"
 )
 
 type Container struct{}
@@ -53,6 +54,10 @@ func (c *Container) Build() *api.Server {
 	RoleHandler := handler.NewRoleHandler(RoleService)
 	RoleRouter := router.NewRoleRouter(RoleHandler)
 
+	UserService := app.NewUserApp(store)
+	UserHandler := handler.NewUserHandler(UserService)
+	UserRouter := router.NewUserRouter(UserHandler)
+
 	server := api.NewServer(
 		config,
 		engine,
@@ -60,6 +65,7 @@ func (c *Container) Build() *api.Server {
 		CategoryRouter,
 		ProviderRouter,
 		RoleRouter,
+		UserRouter,
 	)
 	server.BuildServer()
 	return server
