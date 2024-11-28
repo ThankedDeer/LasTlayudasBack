@@ -12,15 +12,8 @@ import (
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO "user" (role_id, first_name, last_name, email, password, is_active)
-VALUES (
-    $1,
-    $2,
-    $3,
-    $4,
-    $5,
-    COALESCE($6, true)
-)
-RETURNING user_id, role_id, first_name, last_name, email, is_active, created_at, updated_at
+VALUES ($1, $2, $3, $4, $5, COALESCE($6, true))
+RETURNING user_id, role_id, first_name, last_name, email, password, is_active, created_at, updated_at
 `
 
 type CreateUserParams struct {
@@ -29,36 +22,26 @@ type CreateUserParams struct {
 	LastName  string
 	Email     string
 	Password  string
-	IsActive  interface{}
+	Column6   interface{}
 }
 
-type CreateUserRow struct {
-	UserID    int32
-	RoleID    int32
-	FirstName string
-	LastName  string
-	Email     string
-	IsActive  sql.NullBool
-	CreatedAt sql.NullTime
-	UpdatedAt sql.NullTime
-}
-
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
 	row := q.db.QueryRowContext(ctx, createUser,
 		arg.RoleID,
 		arg.FirstName,
 		arg.LastName,
 		arg.Email,
 		arg.Password,
-		arg.IsActive,
+		arg.Column6,
 	)
-	var i CreateUserRow
+	var i User
 	err := row.Scan(
 		&i.UserID,
 		&i.RoleID,
 		&i.FirstName,
 		&i.LastName,
 		&i.Email,
+		&i.Password,
 		&i.IsActive,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -126,31 +109,21 @@ func (q *Queries) GetAllUsers(ctx context.Context) ([]GetAllUsersRow, error) {
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT user_id, role_id, first_name, last_name, email, is_active, created_at, updated_at
+SELECT user_id, role_id, first_name, last_name, email, password, is_active, created_at, updated_at
 FROM "user"
 WHERE email = $1
 `
 
-type GetUserByEmailRow struct {
-	UserID    int32
-	RoleID    int32
-	FirstName string
-	LastName  string
-	Email     string
-	IsActive  sql.NullBool
-	CreatedAt sql.NullTime
-	UpdatedAt sql.NullTime
-}
-
-func (q *Queries) GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error) {
+func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
 	row := q.db.QueryRowContext(ctx, getUserByEmail, email)
-	var i GetUserByEmailRow
+	var i User
 	err := row.Scan(
 		&i.UserID,
 		&i.RoleID,
 		&i.FirstName,
 		&i.LastName,
 		&i.Email,
+		&i.Password,
 		&i.IsActive,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -159,31 +132,21 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (GetUserByEm
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT user_id, role_id, first_name, last_name, email, is_active, created_at, updated_at
+SELECT user_id, role_id, first_name, last_name, email, password, is_active, created_at, updated_at
 FROM "user"
 WHERE user_id = $1
 `
 
-type GetUserByIDRow struct {
-	UserID    int32
-	RoleID    int32
-	FirstName string
-	LastName  string
-	Email     string
-	IsActive  sql.NullBool
-	CreatedAt sql.NullTime
-	UpdatedAt sql.NullTime
-}
-
-func (q *Queries) GetUserByID(ctx context.Context, userID int32) (GetUserByIDRow, error) {
+func (q *Queries) GetUserByID(ctx context.Context, userID int32) (User, error) {
 	row := q.db.QueryRowContext(ctx, getUserByID, userID)
-	var i GetUserByIDRow
+	var i User
 	err := row.Scan(
 		&i.UserID,
 		&i.RoleID,
 		&i.FirstName,
 		&i.LastName,
 		&i.Email,
+		&i.Password,
 		&i.IsActive,
 		&i.CreatedAt,
 		&i.UpdatedAt,

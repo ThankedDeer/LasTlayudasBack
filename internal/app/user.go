@@ -24,7 +24,7 @@ func NewUserApp(store *sqlc.Store) UserApp {
 }
 
 // CreateUser crea un usuario con contraseña hasheada y retorna el usuario creado.
-func (u *UserApp) CreateUser(data dto.CreateUserRequest) (*sqlc.CreateUserRow, error) {
+func (u *UserApp) CreateUser(data dto.CreateUserRequest) (*sqlc.User, error) {
 	// Generar el hash de la contraseña
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -38,7 +38,7 @@ func (u *UserApp) CreateUser(data dto.CreateUserRequest) (*sqlc.CreateUserRow, e
 		LastName:  data.LastName,
 		Email:     data.Email,
 		Password:  string(hashedPassword),
-		IsActive:  data.IsActive,
+		Column6:   data.IsActive,
 	})
 	if err != nil {
 		return nil, err
@@ -62,7 +62,7 @@ func (u *UserApp) GetAllUsers() ([]sqlc.GetAllUsersRow, error) {
 }
 
 // GetUserByID obtiene un usuario por su ID.
-func (u *UserApp) GetUserByID(userID int32) (*sqlc.GetUserByIDRow, error) {
+func (u *UserApp) GetUserByID(userID int32) (*sqlc.User, error) {
 	user, err := u.store.GetUserByID(context.Background(), userID)
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func (u *UserApp) GetUserByID(userID int32) (*sqlc.GetUserByIDRow, error) {
 }
 
 // GetUserByEmail obtiene un usuario por su correo electrónico.
-func (u *UserApp) GetUserByEmail(email string) (*sqlc.GetUserByEmailRow, error) {
+func (u *UserApp) GetUserByEmail(email string) (*sqlc.User, error) {
 	user, err := u.store.GetUserByEmail(context.Background(), email)
 	if err != nil {
 		return nil, err

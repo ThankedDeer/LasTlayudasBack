@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/labstack/echo/v4"
 
@@ -38,6 +39,10 @@ func (c *Container) Build() *api.Server {
 
 	store := sqlc.NewStore(conn)
 
+	// Parámetros para la autenticación
+	jwtSecret := "my_secret_key"  // Debería ser un secreto fuerte y seguro
+	tokenExpiry := 24 * time.Hour // Ejemplo de duración del token
+
 	ProductService := app.NewProductApp(store)
 	ProductHandler := handler.NewProductHandler(ProductService)
 	ProductRouter := router.NewProductRouter(ProductHandler)
@@ -58,6 +63,10 @@ func (c *Container) Build() *api.Server {
 	UserHandler := handler.NewUserHandler(UserService)
 	UserRouter := router.NewUserRouter(UserHandler)
 
+	AuthService := app.NewAuthApp(store, jwtSecret, tokenExpiry)
+	AuthHandler := handler.NewAuthHandler(AuthService)
+	AuthRouter := router.NewAuthRouter(AuthHandler)
+
 	server := api.NewServer(
 		config,
 		engine,
@@ -66,6 +75,7 @@ func (c *Container) Build() *api.Server {
 		ProviderRouter,
 		RoleRouter,
 		UserRouter,
+		AuthRouter,
 	)
 	server.BuildServer()
 	return server

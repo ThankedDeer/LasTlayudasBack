@@ -20,6 +20,7 @@ type Server struct {
 	ProviderRouter router.IProviderRouter
 	RoleRouter     router.IRoleRouter
 	UserRouter     router.IUserRouter
+	AuthRouter     router.IAuthRouter
 }
 
 func NewServer(
@@ -30,6 +31,7 @@ func NewServer(
 	ProviderRouter router.IProviderRouter,
 	RoleRouter router.IRoleRouter,
 	UserRouter router.IUserRouter,
+	AuthRouter router.IAuthRouter,
 	//userRouter router.IUserRouter,
 ) *Server {
 	return &Server{
@@ -40,6 +42,7 @@ func NewServer(
 		ProviderRouter: ProviderRouter,
 		RoleRouter:     RoleRouter,
 		UserRouter:     UserRouter,
+		AuthRouter:     AuthRouter,
 		//userRouter: userRouter,
 	}
 
@@ -56,6 +59,7 @@ func (s *Server) BuildServer() {
 	s.ProviderRouter.ProviderResource(basePath)
 	s.UserRouter.UserResource(basePath)
 	s.RoleRouter.RoleResource(basePath)
+	s.AuthRouter.AuthResource(basePath)
 	//s.userRouter.UserResource(basePath)
 	fmt.Println(basePath)
 

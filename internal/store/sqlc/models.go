@@ -110,9 +110,3 @@ type User struct {
 	CreatedAt sql.NullTime
 	UpdatedAt sql.NullTime
 }
-
-type Waiter struct {
-	WaiterID  int32
-	UserID    int32
-	CreatedAt sql.NullTime
-}
