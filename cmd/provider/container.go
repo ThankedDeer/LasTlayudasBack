@@ -53,6 +53,10 @@ func (c *Container) Build() *api.Server {
 	RoleHandler := handler.NewRoleHandler(RoleService)
 	RoleRouter := router.NewRoleRouter(RoleHandler)
 
+	PermissionService := app.NewPermissionApp(store)
+	PermissionHandler := handler.NewPermissionHandler(PermissionService)
+	PermissionRouter := router.NewPermissionRouter(PermissionHandler)
+	
 	server := api.NewServer(
 		config,
 		engine,
@@ -60,6 +64,7 @@ func (c *Container) Build() *api.Server {
 		CategoryRouter,
 		ProviderRouter,
 		RoleRouter,
+		PermissionRouter,
 	)
 	server.BuildServer()
 	return server
