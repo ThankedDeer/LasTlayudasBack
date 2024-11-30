@@ -16,12 +16,12 @@ RETURNING role_permission_id, role_id, permission_id, created_at
 `
 
 type CreateRolePermissionParams struct {
-	RoleID       int32 `json:"role_id"`
-	PermissionID int32 `json:"permission_id"`
+	RoleID       int32
+	PermissionID int32
 }
 
 func (q *Queries) CreateRolePermission(ctx context.Context, arg CreateRolePermissionParams) (RolePermission, error) {
-	row := q.queryRow(ctx, q.createRolePermissionStmt, createRolePermission, arg.RoleID, arg.PermissionID)
+	row := q.db.QueryRowContext(ctx, createRolePermission, arg.RoleID, arg.PermissionID)
 	var i RolePermission
 	err := row.Scan(
 		&i.RolePermissionID,
@@ -38,7 +38,7 @@ WHERE role_permission_id = $1
 `
 
 func (q *Queries) DeleteRolePermission(ctx context.Context, rolePermissionID int32) error {
-	_, err := q.exec(ctx, q.deleteRolePermissionStmt, deleteRolePermission, rolePermissionID)
+	_, err := q.db.ExecContext(ctx, deleteRolePermission, rolePermissionID)
 	return err
 }
 
@@ -51,7 +51,7 @@ ORDER BY p.name
 `
 
 func (q *Queries) GetPermissionsByRoleID(ctx context.Context, roleID int32) ([]RolePermission, error) {
-	rows, err := q.query(ctx, q.getPermissionsByRoleIDStmt, getPermissionsByRoleID, roleID)
+	rows, err := q.db.QueryContext(ctx, getPermissionsByRoleID, roleID)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ WHERE role_permission_id = $1
 `
 
 func (q *Queries) GetRolePermissionByID(ctx context.Context, rolePermissionID int32) (RolePermission, error) {
-	row := q.queryRow(ctx, q.getRolePermissionByIDStmt, getRolePermissionByID, rolePermissionID)
+	row := q.db.QueryRowContext(ctx, getRolePermissionByID, rolePermissionID)
 	var i RolePermission
 	err := row.Scan(
 		&i.RolePermissionID,
@@ -105,7 +105,7 @@ ORDER BY r.name
 `
 
 func (q *Queries) GetRolesByPermissionID(ctx context.Context, permissionID int32) ([]RolePermission, error) {
-	rows, err := q.query(ctx, q.getRolesByPermissionIDStmt, getRolesByPermissionID, permissionID)
+	rows, err := q.db.QueryContext(ctx, getRolesByPermissionID, permissionID)
 	if err != nil {
 		return nil, err
 	}

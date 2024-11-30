@@ -2,7 +2,6 @@ DROP TABLE IF EXISTS "order_product";
 DROP TABLE IF EXISTS "order";
 DROP TABLE IF EXISTS "product";
 DROP TABLE IF EXISTS "restaurant_table";
-DROP TABLE IF EXISTS "waiter";
 DROP TABLE IF EXISTS "user";
 DROP TABLE IF EXISTS "role_permission";
 DROP TABLE IF EXISTS "permission";
