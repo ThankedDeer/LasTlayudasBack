@@ -67,6 +67,18 @@ func (c *Container) Build() *api.Server {
 	AuthHandler := handler.NewAuthHandler(AuthService)
 	AuthRouter := router.NewAuthRouter(AuthHandler)
 
+	OrderProductService := app.NewOrderProductApp(store)
+	OrderProductHandler := handler.NewOrderProductHandler(OrderProductService)
+	OrderProductRouter := router.NewOrderProductRouter(OrderProductHandler)
+
+	OrderService := app.NewOrderApp(store)
+	OrderHandler := handler.NewOrderHandler(OrderService)
+	OrderRouter := router.NewOrderRouter(OrderHandler)
+
+	Restaurant_tableService := app.NewRestaurantTableApp(store)
+	Restaurant_tableHandler := handler.NewRestaurantTableHandler(Restaurant_tableService)
+	Restaurant_tableRouter := router.NewRestaurantTableRouter(Restaurant_tableHandler)
+
 	server := api.NewServer(
 		config,
 		engine,
@@ -76,6 +88,9 @@ func (c *Container) Build() *api.Server {
 		RoleRouter,
 		UserRouter,
 		AuthRouter,
+		OrderProductRouter,
+		OrderRouter,
+		Restaurant_tableRouter,
 	)
 	server.BuildServer()
 	return server

@@ -15,12 +15,15 @@ type Server struct {
 	cfg    config.Config
 	engine *echo.Echo
 	//userRouter router.IUserRouter
-	ProductRouter  router.IProductRouter
-	CategoryRouter router.ICategoryRouter
-	ProviderRouter router.IProviderRouter
-	RoleRouter     router.IRoleRouter
-	UserRouter     router.IUserRouter
-	AuthRouter     router.IAuthRouter
+	ProductRouter    router.IProductRouter
+	CategoryRouter   router.ICategoryRouter
+	ProviderRouter   router.IProviderRouter
+	RoleRouter       router.IRoleRouter
+	UserRouter       router.IUserRouter
+	AuthRouter       router.IAuthRouter
+	OrderProduct     router.IOrderProductRouter
+	Order            router.IOrderRouter
+	Restaurant_table router.IRestaurantTableRouter
 }
 
 func NewServer(
@@ -32,17 +35,23 @@ func NewServer(
 	RoleRouter router.IRoleRouter,
 	UserRouter router.IUserRouter,
 	AuthRouter router.IAuthRouter,
+	OrderProductRouter router.IOrderProductRouter,
+	OrderRouter router.IOrderRouter,
+	Restaurant_tableRouter router.IRestaurantTableRouter,
 	//userRouter router.IUserRouter,
 ) *Server {
 	return &Server{
-		cfg:            cfg,
-		engine:         engine,
-		ProductRouter:  ProductRouter,
-		CategoryRouter: CategoryRouter,
-		ProviderRouter: ProviderRouter,
-		RoleRouter:     RoleRouter,
-		UserRouter:     UserRouter,
-		AuthRouter:     AuthRouter,
+		cfg:              cfg,
+		engine:           engine,
+		ProductRouter:    ProductRouter,
+		CategoryRouter:   CategoryRouter,
+		ProviderRouter:   ProviderRouter,
+		RoleRouter:       RoleRouter,
+		UserRouter:       UserRouter,
+		AuthRouter:       AuthRouter,
+		OrderProduct:     OrderProductRouter,
+		Order:            OrderRouter,
+		Restaurant_table: Restaurant_tableRouter,
 		//userRouter: userRouter,
 	}
 
@@ -60,6 +69,9 @@ func (s *Server) BuildServer() {
 	s.UserRouter.UserResource(basePath)
 	s.RoleRouter.RoleResource(basePath)
 	s.AuthRouter.AuthResource(basePath)
+	s.OrderProduct.OrderProductResource(basePath)
+	s.Order.OrderResource(basePath)
+	s.Restaurant_table.RestaurantTableResource(basePath)
 	//s.userRouter.UserResource(basePath)
 	fmt.Println(basePath)
 

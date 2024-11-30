@@ -71,7 +71,6 @@ type Provider struct {
 type RestaurantTable struct {
 	TableID   int32
 	Number    int32
-	WaiterID  int32
 	StatusID  int32
 	CreatedAt sql.NullTime
 	UpdatedAt sql.NullTime

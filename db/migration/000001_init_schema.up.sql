@@ -81,7 +81,6 @@ CREATE TABLE "table_status" (
 CREATE TABLE "restaurant_table" (
   "table_id" serial PRIMARY KEY,
   "number" integer UNIQUE NOT NULL,
-  "waiter_id" integer NOT NULL,
   "status_id" integer NOT NULL,
   "created_at" timestamp DEFAULT current_timestamp,
   "updated_at" timestamp DEFAULT current_timestamp,
