@@ -16,13 +16,13 @@ RETURNING order_product_id, order_id, product_id, quantity
 `
 
 type CreateOrderProductParams struct {
-	OrderID   int32       `json:"order_id"`
-	ProductID int32       `json:"product_id"`
-	Column3   interface{} `json:"column_3"`
+	OrderID   int32
+	ProductID int32
+	Column3   interface{}
 }
 
 func (q *Queries) CreateOrderProduct(ctx context.Context, arg CreateOrderProductParams) (OrderProduct, error) {
-	row := q.queryRow(ctx, q.createOrderProductStmt, createOrderProduct, arg.OrderID, arg.ProductID, arg.Column3)
+	row := q.db.QueryRowContext(ctx, createOrderProduct, arg.OrderID, arg.ProductID, arg.Column3)
 	var i OrderProduct
 	err := row.Scan(
 		&i.OrderProductID,
@@ -39,7 +39,7 @@ WHERE order_product_id = $1
 `
 
 func (q *Queries) DeleteOrderProduct(ctx context.Context, orderProductID int32) error {
-	_, err := q.exec(ctx, q.deleteOrderProductStmt, deleteOrderProduct, orderProductID)
+	_, err := q.db.ExecContext(ctx, deleteOrderProduct, orderProductID)
 	return err
 }
 
@@ -50,7 +50,7 @@ WHERE order_product_id = $1
 `
 
 func (q *Queries) GetOrderProductByID(ctx context.Context, orderProductID int32) (OrderProduct, error) {
-	row := q.queryRow(ctx, q.getOrderProductByIDStmt, getOrderProductByID, orderProductID)
+	row := q.db.QueryRowContext(ctx, getOrderProductByID, orderProductID)
 	var i OrderProduct
 	err := row.Scan(
 		&i.OrderProductID,
@@ -68,7 +68,7 @@ WHERE product_id = $1
 `
 
 func (q *Queries) GetOrdersByProductID(ctx context.Context, productID int32) ([]OrderProduct, error) {
-	rows, err := q.query(ctx, q.getOrdersByProductIDStmt, getOrdersByProductID, productID)
+	rows, err := q.db.QueryContext(ctx, getOrdersByProductID, productID)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ WHERE order_id = $1
 `
 
 func (q *Queries) GetProductsByOrderID(ctx context.Context, orderID int32) ([]OrderProduct, error) {
-	rows, err := q.query(ctx, q.getProductsByOrderIDStmt, getProductsByOrderID, orderID)
+	rows, err := q.db.QueryContext(ctx, getProductsByOrderID, orderID)
 	if err != nil {
 		return nil, err
 	}
@@ -136,11 +136,11 @@ WHERE order_product_id = $1
 `
 
 type UpdateOrderProductParams struct {
-	OrderProductID int32 `json:"order_product_id"`
-	Quantity       int32 `json:"quantity"`
+	OrderProductID int32
+	Quantity       int32
 }
 
 func (q *Queries) UpdateOrderProduct(ctx context.Context, arg UpdateOrderProductParams) error {
-	_, err := q.exec(ctx, q.updateOrderProductStmt, updateOrderProduct, arg.OrderProductID, arg.Quantity)
+	_, err := q.db.ExecContext(ctx, updateOrderProduct, arg.OrderProductID, arg.Quantity)
 	return err
 }

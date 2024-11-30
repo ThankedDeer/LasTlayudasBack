@@ -46,12 +46,12 @@ func (u *CategoryHandler) CreateCategory(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "El campo 'name' es obligatorio."})
 	}
 
-	// Asignar true a 'Active' si no se envía en la solicitud
-	if c.Request().Header.Get("Content-Type") == "application/json" && req.Column3 == false {
-		req.Column3 = true
+	// Asignar true a 'is_active' si no se envía en la solicitud
+	if c.Request().Header.Get("Content-Type") == "application/json" && !req.Is_active {
+		req.Is_active = true
 	}
 
-	category, err := u.app.CreateCategory(c.Request().Context(), req.Name, req.Description, req.Column3)
+	category, err := u.app.CreateCategory(c.Request().Context(), req.Name, req.Description, req.Is_active)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
@@ -91,18 +91,16 @@ func (u *CategoryHandler) UpdateCategory(c echo.Context) error {
 		description = sql.NullString{String: *req.Description, Valid: true}
 	}
 
-	// Convertir *bool a sql.NullBool para el campo Active
-	active := sql.NullBool{}
-	if req.Active != nil {
-		active = sql.NullBool{Bool: *req.Active, Valid: true}
-	}
+	// Convertir *bool a sql.NullBool para el campo is_active
+
+	is_active := sql.NullBool{Bool: req.Is_active, Valid: true}
 
 	// Crear los parámetros de actualización usando los datos decodificados
 	updateParams := sqlc.UpdateCategoryParams{
 		CategoryID:  int32(id),
 		Name:        req.Name,
 		Description: description,
-		IsActive:    active,
+		IsActive:    is_active,
 	}
 
 	// Ejecutar la actualización de la categoría en la base de datos

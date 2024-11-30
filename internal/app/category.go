@@ -20,7 +20,7 @@ func NewCategoryApp(store *sqlc.Store) CategoryApp {
 }
 
 // CreateCategory crea una nueva categoría en la base de datos
-func (u *CategoryApp) CreateCategory(ctx context.Context, name string, description *string, active bool) (sqlc.Category, error) {
+func (u *CategoryApp) CreateCategory(ctx context.Context, name string, description *string, is_active bool) (sqlc.Category, error) {
 	var category sqlc.Category
 
 	err := u.store.ExecTx(ctx, func(q *sqlc.Queries) error {
@@ -31,7 +31,7 @@ func (u *CategoryApp) CreateCategory(ctx context.Context, name string, descripti
 				Valid:  true,
 			},
 			IsActive: sql.NullBool{
-				Bool:  active,
+				Bool:  is_active,
 				Valid: false,
 			},
 		}
