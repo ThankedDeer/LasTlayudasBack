@@ -33,5 +33,8 @@ init:
 
 restart:
 	make dropdb createdb migrateup
+
+swagger:
+	swag init --parseDependency -g internal/infra/api/serve.go
 	
-.POHNY: postgres createbd dropdb rundb migrateup migratedown sqlc test server start init
+.POHNY: postgres createbd dropdb rundb migrateup migratedown sqlc test server start init restart swagger

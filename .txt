@@ -3,7 +3,7 @@ comandos utiles porque luego esto no jala chido
 comando para moverme a mi path del proyecto en wsl
 cd /mnt/d/Las\ Tlayudas/Back
 
-
+swag init --parseDependency -g internal\infra\api\server.go
 ----Modulos----
 
     Usuarios 

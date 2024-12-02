@@ -32,6 +32,16 @@ func NewCategoryHandler(app app.CategoryApp) ICategoryHandler {
 }
 
 // CreateCategory maneja la creación de una nueva categoría
+// @Summary Create a new category
+// @Description Create a new category with the input payload
+// @Tags categories
+// @Accept json
+// @Produce json
+// @Param category body dto.CreateCategoryRequest true "Category to create"
+// @Success 201 {object} sqlc.Category
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /api/category/ [post]
 func (u *CategoryHandler) CreateCategory(c echo.Context) error {
 	var req dto.CreateCategoryRequest
 
@@ -60,6 +70,13 @@ func (u *CategoryHandler) CreateCategory(c echo.Context) error {
 }
 
 // GetAllCategories obtiene todas las categorías
+// @Summary Get all categories
+// @Description Retrieve all categories
+// @Tags categories
+// @Produce json
+// @Success 200 {array} sqlc.Category
+// @Failure 404 {object} map[string]string
+// @Router /api/category/ [get]
 func (u *CategoryHandler) GetAllCategories(c echo.Context) error {
 	categories, err := u.app.GetAllCategories(c.Request().Context())
 	if err != nil {
@@ -70,6 +87,17 @@ func (u *CategoryHandler) GetAllCategories(c echo.Context) error {
 }
 
 // UpdateCategory maneja la actualización de una categoría
+// @Summary Update an existing category
+// @Description Update an existing category with the input payload
+// @Tags categories
+// @Accept json
+// @Produce json
+// @Param id path int true "Category ID"
+// @Param category body dto.UpdateCategoryRequest true "Category to update"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /api/category/{id} [put]
 func (u *CategoryHandler) UpdateCategory(c echo.Context) error {
 	// Convertir el ID de categoría de la URL a entero
 	id, err := strconv.Atoi(c.Param("id"))
@@ -91,7 +119,6 @@ func (u *CategoryHandler) UpdateCategory(c echo.Context) error {
 	}
 
 	// Convertir *bool a sql.NullBool para el campo is_active
-
 	is_active := sql.NullBool{Bool: req.Is_active, Valid: true}
 
 	// Crear los parámetros de actualización usando los datos decodificados
@@ -112,6 +139,14 @@ func (u *CategoryHandler) UpdateCategory(c echo.Context) error {
 }
 
 // DeleteCategory maneja la eliminación de una categoría por su ID
+// @Summary Delete a category
+// @Description Delete a category by its ID
+// @Tags categories
+// @Param id path int true "Category ID"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /api/category/{id} [delete]
 func (u *CategoryHandler) DeleteCategory(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -127,6 +162,15 @@ func (u *CategoryHandler) DeleteCategory(c echo.Context) error {
 }
 
 // GetCategoryByID obtiene una categoría por su ID
+// @Summary Get a category by ID
+// @Description Retrieve a category by its ID
+// @Tags categories
+// @Produce json
+// @Param id path int true "Category ID"
+// @Success 200 {object} sqlc.Category
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Router /api/category/{id} [get]
 func (u *CategoryHandler) GetCategoryByID(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

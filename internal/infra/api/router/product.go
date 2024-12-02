@@ -4,6 +4,7 @@ import (
 	"github/thankeddeer/lastlayudas/internal/infra/api/handler"
 
 	"github.com/labstack/echo/v4"
+
 )
 
 type IProductRouter interface {
@@ -21,7 +22,7 @@ func NewProductRouter(handler handler.IProductHandler) IProductRouter {
 }
 
 func (u *ProductRouter) ProductResource(g *echo.Group) {
-	groupPath := g.Group("/product")
+	groupPath := g.Group("/products")
 	groupPath.POST("/", u.handler.CreateProduct)
 	groupPath.GET("/", u.handler.GetAllProducts)
 	groupPath.PUT("/", u.handler.UpdateProduct)
