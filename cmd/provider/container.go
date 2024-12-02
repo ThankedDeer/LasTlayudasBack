@@ -12,6 +12,7 @@ import (
 	"log"
 
 	"github.com/labstack/echo/v4"
+
 )
 
 type Container struct{}
@@ -32,7 +33,7 @@ func (c *Container) Build() *api.Server {
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
-	fmt.Println(conn)
+	fmt.Println("Connected to db successfully", conn.Stats())
 	engine := echo.New()
 
 	store := sqlc.NewStore(conn)

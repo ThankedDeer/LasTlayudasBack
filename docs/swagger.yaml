@@ -1,0 +1,321 @@
+definitions:
+  github_thankeddeer_lastlayudas_internal_domain_dto.CreateCategoryRequest:
+    properties:
+      description:
+        description: Permite descripciones nulas
+        type: string
+      is_active:
+        description: Estado activo de la categoría
+        type: boolean
+      name:
+        type: string
+    type: object
+  github_thankeddeer_lastlayudas_internal_domain_dto.CreateProductRequest:
+    properties:
+      category_id:
+        type: integer
+      name:
+        type: string
+      provider_id:
+        type: integer
+      purchase_price:
+        type: string
+      sale_price:
+        type: string
+      stock:
+        type: integer
+    type: object
+  github_thankeddeer_lastlayudas_internal_domain_dto.UpdateCategoryRequest:
+    properties:
+      description:
+        description: Permite descripciones nulas
+        type: string
+      is_active:
+        description: Estado activo de la categoría
+        type: boolean
+      name:
+        type: string
+    type: object
+  github_thankeddeer_lastlayudas_internal_store_sqlc.Category:
+    properties:
+      categoryID:
+        type: integer
+      createdAt:
+        $ref: '#/definitions/sql.NullTime'
+      description:
+        $ref: '#/definitions/sql.NullString'
+      isActive:
+        $ref: '#/definitions/sql.NullBool'
+      name:
+        type: string
+      updatedAt:
+        $ref: '#/definitions/sql.NullTime'
+    type: object
+  sql.NullBool:
+    properties:
+      bool:
+        type: boolean
+      valid:
+        description: Valid is true if Bool is not NULL
+        type: boolean
+    type: object
+  sql.NullString:
+    properties:
+      string:
+        type: string
+      valid:
+        description: Valid is true if String is not NULL
+        type: boolean
+    type: object
+  sql.NullTime:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+info:
+  contact: {}
+paths:
+  /api/category/:
+    get:
+      description: Retrieve all categories
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_thankeddeer_lastlayudas_internal_store_sqlc.Category'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all categories
+      tags:
+      - categories
+    post:
+      consumes:
+      - application/json
+      description: Create a new category with the input payload
+      parameters:
+      - description: Category to create
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/github_thankeddeer_lastlayudas_internal_domain_dto.CreateCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_thankeddeer_lastlayudas_internal_store_sqlc.Category'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new category
+      tags:
+      - categories
+  /api/category/{id}:
+    delete:
+      description: Delete a category by its ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a category
+      tags:
+      - categories
+    get:
+      description: Retrieve a category by its ID
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_thankeddeer_lastlayudas_internal_store_sqlc.Category'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get a category by ID
+      tags:
+      - categories
+    put:
+      consumes:
+      - application/json
+      description: Update an existing category with the input payload
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Category to update
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/github_thankeddeer_lastlayudas_internal_domain_dto.UpdateCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update an existing category
+      tags:
+      - categories
+  /api/products/:
+    get:
+      description: Retrieve all products
+      produces:
+      - application/json
+      responses:
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all products
+      tags:
+      - products
+    post:
+      consumes:
+      - application/json
+      description: Create a new product with the input payload
+      parameters:
+      - description: Product to create
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/github_thankeddeer_lastlayudas_internal_domain_dto.CreateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new product
+      tags:
+      - products
+  /api/products/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update an existing product with the input payload
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update an existing product
+      tags:
+      - products
+swagger: "2.0"

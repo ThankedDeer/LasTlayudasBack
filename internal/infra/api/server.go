@@ -3,11 +3,14 @@ package api
 import (
 	"fmt"
 	"github/thankeddeer/lastlayudas/config"
+	_ "github/thankeddeer/lastlayudas/docs"
 	"github/thankeddeer/lastlayudas/internal/infra/api/router"
 	"log"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	echoSwagger "github.com/swaggo/echo-swagger"
+
 )
 
 type Server struct {
@@ -45,6 +48,7 @@ func (s *Server) BuildServer() {
 	s.engine.Use(middleware.CORS())
 	s.engine.Use(middleware.Logger())
 	s.engine.Use(middleware.Recover())
+	s.engine.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	basePath := s.engine.Group("/api")
 	s.ProductRouter.ProductResource(basePath)
